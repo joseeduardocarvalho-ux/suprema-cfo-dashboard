@@ -66,6 +66,43 @@
       padding: 0;
     }
 
+    /* ── PERIOD SELECTOR ── */
+    .period-bar {
+      background: rgba(7,7,16,0.6);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 10px 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .period-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+    .period-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: rgba(255,255,255,0.55);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.15s;
+    }
+    .period-btn:hover { border-color: rgba(229,53,53,0.5); color: rgba(255,255,255,0.85); }
+    .period-btn.active {
+      background: #E53535;
+      border-color: #E53535;
+      color: #fff;
+      font-weight: 700;
+    }
+
     /* ── HEADER ── */
     .header {
       background: rgba(7,7,16,0.92);
@@ -645,6 +682,15 @@
   <div class="nav-tab" onclick="switchTab('provisao')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Provisionamento</div>
 </div>
 
+<!-- PERIOD SELECTOR -->
+<div class="period-bar">
+  <span class="period-label">Período:</span>
+  <button class="period-btn" onclick="setPeriodo('jan')" id="pbtn-jan">Janeiro</button>
+  <button class="period-btn" onclick="setPeriodo('fev')" id="pbtn-fev">Fevereiro</button>
+  <button class="period-btn" onclick="setPeriodo('mar')" id="pbtn-mar">Março</button>
+  <button class="period-btn active" onclick="setPeriodo('q1')" id="pbtn-q1">Q1 2026</button>
+</div>
+
 <!-- MAIN -->
 <div class="main">
 
@@ -654,13 +700,13 @@
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-label">Receita Q1 Total</div>
-        <div class="kpi-value gold">R$ 1,979M</div>
-        <div class="kpi-sub">Janeiro + Fevereiro + Março</div>
+        <div class="kpi-value gold" id="kpi-receita">R$ 1,979M</div>
+        <div class="kpi-sub" id="kpi-receita-sub">Janeiro + Fevereiro + Março</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Resultado Q1</div>
-        <div class="kpi-value positive">+R$ 139.919</div>
-        <div class="kpi-sub"><span class="kpi-badge badge-up">7,1% de margem</span></div>
+        <div class="kpi-value positive" id="kpi-resultado">+R$ 139.919</div>
+        <div class="kpi-sub" id="kpi-margem-sub"><span class="kpi-badge badge-up">7,1% de margem</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Dívida Total Hoje</div>
@@ -785,197 +831,9 @@
   <!-- ── DRE ── -->
   <div class="section" id="tab-dre">
     <div class="card">
-      <div class="card-title">Demonstrativo de Resultado do Exercício — Q1 2026</div>
-      <div style="overflow-x:auto">
-        <table class="dre-table">
-          <thead>
-            <tr>
-              <th style="width:40%">Categoria</th>
-              <th>Janeiro</th>
-              <th>Fevereiro</th>
-              <th>Março</th>
-              <th>Q1 Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="dre-section-header"><td colspan="5">RECEITA BRUTA</td></tr>
-            <tr>
-              <td class="indent">Novos Registros</td>
-              <td class="revenue-val">R$ 346.096</td>
-              <td class="revenue-val">R$ 457.753</td>
-              <td class="revenue-val">R$ 502.862</td>
-              <td class="revenue-val">R$ 1.306.711</td>
-            </tr>
-            <tr>
-              <td class="indent">Procurações</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">R$ 655.614</td>
-              <td class="revenue-val">R$ 655.614</td>
-            </tr>
-            <tr>
-              <td class="indent">Anuidades</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">R$ 16.635</td>
-              <td class="revenue-val">R$ 16.635</td>
-            </tr>
-            <tr class="dre-total">
-              <td>TOTAL RECEITA</td>
-              <td class="revenue-val">R$ 346.096</td>
-              <td class="revenue-val">R$ 457.753</td>
-              <td class="revenue-val">R$ 1.175.111</td>
-              <td class="revenue-val">R$ 1.978.960</td>
-            </tr>
-
-            <tr class="dre-section-header"><td colspan="5">CUSTO DIRETO DO SERVIÇO</td></tr>
-            <tr>
-              <td class="indent">GRU / INPI</td>
-              <td>R$ 37.800</td>
-              <td>R$ 55.850</td>
-              <td>R$ 78.400</td>
-              <td>R$ 172.050</td>
-            </tr>
-            <tr>
-              <td class="indent">Correspondente Internacional</td>
-              <td>—</td>
-              <td>R$ 26.359</td>
-              <td>R$ 3.744</td>
-              <td>R$ 30.103</td>
-            </tr>
-            <tr>
-              <td class="indent">Relatórios de Patente</td>
-              <td>R$ 1.760</td>
-              <td>R$ 4.040</td>
-              <td>R$ 8.100</td>
-              <td>R$ 13.900</td>
-            </tr>
-
-            <tr class="dre-section-header"><td colspan="5">DESPESAS OPERACIONAIS</td></tr>
-            <tr>
-              <td class="indent">Salários</td>
-              <td>R$ 84.478</td>
-              <td>R$ 74.091</td>
-              <td>R$ 81.131</td>
-              <td>R$ 239.700</td>
-            </tr>
-            <tr>
-              <td class="indent">Rescisões</td>
-              <td>—</td>
-              <td>—</td>
-              <td class="negative-val">R$ 49.072</td>
-              <td class="negative-val">R$ 49.072</td>
-            </tr>
-            <tr>
-              <td class="indent">Impostos (DAS + FGTS + INSS)</td>
-              <td>R$ 99.123</td>
-              <td>R$ 82.131</td>
-              <td>R$ 76.732</td>
-              <td>R$ 257.986</td>
-            </tr>
-            <tr>
-              <td class="indent">Aluguel (Curitiba + Cascavel)</td>
-              <td>R$ 28.816</td>
-              <td>R$ 30.600</td>
-              <td>R$ 30.600</td>
-              <td>R$ 90.016</td>
-            </tr>
-            <tr>
-              <td class="indent">Serviço da Dívida</td>
-              <td>R$ 26.283</td>
-              <td>R$ 26.283</td>
-              <td>R$ 46.370</td>
-              <td>R$ 98.936</td>
-            </tr>
-            <tr>
-              <td class="indent">Marketing e Publicidade</td>
-              <td>R$ 12.483</td>
-              <td>R$ 10.546</td>
-              <td>R$ 8.535</td>
-              <td>R$ 31.564</td>
-            </tr>
-            <tr>
-              <td class="indent">Sistemas (APOL, Drive, Ponto)</td>
-              <td>R$ 15.191</td>
-              <td>R$ 15.191</td>
-              <td>R$ 15.287</td>
-              <td>R$ 45.669</td>
-            </tr>
-            <tr>
-              <td class="indent">Benefícios (VR + VT)</td>
-              <td>R$ 16.925</td>
-              <td>R$ 22.311</td>
-              <td>R$ 17.397</td>
-              <td>R$ 56.633</td>
-            </tr>
-            <tr>
-              <td class="indent">Outros Operacionais</td>
-              <td>R$ 71.571</td>
-              <td>R$ 54.953</td>
-              <td>R$ 75.939</td>
-              <td>R$ 202.463</td>
-            </tr>
-            <tr class="dre-total">
-              <td>SUBTOTAL DESPESAS</td>
-              <td>R$ 394.430</td>
-              <td>R$ 402.355</td>
-              <td>R$ 490.910</td>
-              <td>R$ 1.287.695</td>
-            </tr>
-
-            <tr class="dre-section-header"><td colspan="5">DISTRIBUIÇÃO AOS SÓCIOS</td></tr>
-            <tr>
-              <td class="indent">Retirada Normal Mensal</td>
-              <td>R$ 110.000</td>
-              <td>R$ 80.000</td>
-              <td>R$ 120.000</td>
-              <td>R$ 310.000</td>
-            </tr>
-            <tr>
-              <td class="indent">Retirada Extra (Procuração)</td>
-              <td>—</td>
-              <td>—</td>
-              <td class="negative-val">R$ 255.000</td>
-              <td class="negative-val">R$ 255.000</td>
-            </tr>
-            <tr class="dre-total">
-              <td>TOTAL SAÍDAS</td>
-              <td>R$ 502.670</td>
-              <td>R$ 478.164</td>
-              <td>R$ 858.207</td>
-              <td>R$ 1.839.041</td>
-            </tr>
-
-            <tr class="dre-result-neg">
-              <td><strong>RESULTADO — JAN</strong></td>
-              <td class="negative-val"><strong>-R$ 156.574</strong></td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr class="dre-result-neg">
-              <td><strong>RESULTADO — FEV</strong></td>
-              <td>—</td>
-              <td class="negative-val"><strong>-R$ 20.411</strong></td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr class="dre-result">
-              <td><strong>RESULTADO — MAR</strong></td>
-              <td>—</td>
-              <td>—</td>
-              <td class="positive-val"><strong>+R$ 316.904</strong></td>
-              <td>—</td>
-            </tr>
-            <tr class="dre-result">
-              <td><strong>RESULTADO Q1</strong></td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td class="positive-val"><strong>+R$ 139.919</strong></td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="card-title" id="dre-title">Demonstrativo de Resultado do Exercício — Q1 2026</div>
+      <div style="overflow-x:auto" id="dre-container">
+        <!-- gerado por JS -->
       </div>
     </div>
   </div>
@@ -1415,11 +1273,14 @@
   function buildCharts() {
     if (chartsBuilt) return;
     chartsBuilt = true;
+    // Destroy existing chart instances before rebuilding
+    Object.values(Chart.instances).forEach(function(chart) { chart.destroy(); });
 
-    var months = ['Janeiro', 'Fevereiro', 'Março'];
-    var receita = [346096, 457753, 1175111];
-    var despesas = [502670, 478164, 858207];
-    var resultado = [-156574, -20411, 316904];
+    var isQ1 = periodoAtual === 'q1';
+    var months = isQ1 ? ['Janeiro', 'Fevereiro', 'Março'] : [PERIODOS[periodoAtual].label.split(' ')[0]];
+    var receita = isQ1 ? [346096, 457753, 1175111] : [PERIODOS[periodoAtual].receita];
+    var despesas = isQ1 ? [502670, 478164, 858207] : [PERIODOS[periodoAtual].despesas];
+    var resultado = isQ1 ? [-156574, -20411, 316904] : [PERIODOS[periodoAtual].resultado];
 
     // ── VISÃO GERAL — bar ──
     var cv = document.getElementById('chartVisao');
@@ -1816,9 +1677,183 @@
     }
   }
 
+  // ── DADOS POR PERÍODO ──
+  var PERIODOS = {
+    jan: {
+      label: 'Janeiro 2026',
+      receita: 346096, despesas: 502670, resultado: -156574, margem: -45.2, gru: 37800,
+      rec: { novos: 346096, proc: 0, anu: 0 },
+      desp: { salarios: 84478, rescisoes: 0, impostos: 99123, gru: 37800, aluguel: 28816, divida: 26283, marketing: 12483, sistemas: 15191, beneficios: 16925, socios: 110000, outros: 71571 }
+    },
+    fev: {
+      label: 'Fevereiro 2026',
+      receita: 457753, despesas: 478164, resultado: -20411, margem: -4.5, gru: 55850,
+      rec: { novos: 457753, proc: 0, anu: 0 },
+      desp: { salarios: 74091, rescisoes: 0, impostos: 82131, gru: 55850, aluguel: 30600, divida: 26283, marketing: 10546, sistemas: 15191, beneficios: 22311, socios: 80000, outros: 81161 }
+    },
+    mar: {
+      label: 'Março 2026',
+      receita: 1175111, despesas: 858207, resultado: 316904, margem: 27.0, gru: 78400,
+      rec: { novos: 502862, proc: 655614, anu: 16635 },
+      desp: { salarios: 81131, rescisoes: 49072, impostos: 76732, gru: 78400, aluguel: 30600, divida: 46370, marketing: 8535, sistemas: 15287, beneficios: 17397, socios: 375000, outros: 75683 }
+    },
+    q1: {
+      label: 'Q1 2026 — Jan · Fev · Mar',
+      receita: 1978960, despesas: 1839041, resultado: 139919, margem: 7.1, gru: 172050,
+      rec: { novos: 1306711, proc: 655614, anu: 16635 },
+      desp: { salarios: 239700, rescisoes: 49072, impostos: 257986, gru: 172050, aluguel: 90016, divida: 98936, marketing: 31564, sistemas: 45669, beneficios: 56633, socios: 565000, outros: 228415 }
+    }
+  };
+  var periodoAtual = 'q1';
+
+  function fmtBRL(v) {
+    if (v === 0) return '—';
+    var abs = Math.abs(v);
+    var str = 'R$ ' + abs.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
+    return (v < 0 ? '-' : '') + str;
+  }
+  function fmtBRLplus(v) {
+    if (v === 0) return '—';
+    var abs = Math.abs(v);
+    var str = 'R$ ' + abs.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
+    return (v > 0 ? '+' : '-') + str;
+  }
+
+  function setPeriodo(p) {
+    periodoAtual = p;
+    // Update buttons
+    ['jan','fev','mar','q1'].forEach(function(k) {
+      var b = document.getElementById('pbtn-' + k);
+      if (b) b.classList.toggle('active', k === p);
+    });
+    var d = PERIODOS[p];
+    // Update header badge
+    var badge = document.querySelector('.header-badge');
+    if (badge) badge.textContent = d.label;
+    // Update DRE title
+    var dt = document.getElementById('dre-title');
+    if (dt) dt.textContent = 'Demonstrativo de Resultado — ' + d.label;
+    // Update KPIs
+    updateKPIs(d);
+    // Rebuild DRE table
+    buildDREtable(p, d);
+    // Rebuild charts
+    chartsBuilt = false;
+    buildCharts();
+  }
+
+  function updateKPIs(d) {
+    var recEl = document.getElementById('kpi-receita');
+    if (recEl) {
+      recEl.className = 'kpi-value gold';
+      recEl.textContent = d.receita >= 1000000
+        ? 'R$ ' + (d.receita/1000000).toFixed(2).replace('.',',') + 'M'
+        : fmtBRL(d.receita);
+    }
+    var resEl = document.getElementById('kpi-resultado');
+    if (resEl) {
+      resEl.className = 'kpi-value ' + (d.resultado >= 0 ? 'positive' : 'negative');
+      resEl.textContent = fmtBRLplus(d.resultado);
+    }
+    var subMar = document.getElementById('kpi-margem-sub');
+    if (subMar) subMar.textContent = 'margem ' + d.margem.toFixed(1).replace('.',',') + '%';
+    var subRec = document.getElementById('kpi-receita-sub');
+    if (subRec) {
+      if (d === PERIODOS.q1) {
+        subRec.textContent = 'Janeiro + Fevereiro + Março';
+      } else {
+        subRec.textContent = 'receita bruta do período';
+      }
+    }
+  }
+
+  function buildDREtable(p, d) {
+    var container = document.getElementById('dre-container');
+    if (!container) return;
+    var isQ1 = p === 'q1';
+    var cols = isQ1
+      ? ['Janeiro', 'Fevereiro', 'Março', 'Q1 Total']
+      : [d.label.split(' ')[0]];
+
+    var jd = PERIODOS.jan, fd = PERIODOS.fev, md = PERIODOS.mar;
+
+    function th(txt) { return '<th>' + txt + '</th>'; }
+    function recTd(v) { return '<td class="revenue-val">' + (v ? fmtBRL(v) : '—') + '</td>'; }
+    function negTd(v) { return '<td class="negative-val">' + (v ? fmtBRL(v) : '—') + '</td>'; }
+    function boldTd(v, cls) { return '<td class="' + cls + '"><strong>' + fmtBRL(v) + '</strong></td>'; }
+    function resTd(v) {
+      var cls = v > 0 ? 'positive-val' : 'negative-val';
+      return '<td class="' + cls + '"><strong>' + fmtBRLplus(v) + '</strong></td>';
+    }
+
+    function rowRec(label, key) {
+      var vals = isQ1
+        ? recTd(jd.rec[key]) + recTd(fd.rec[key]) + recTd(md.rec[key]) + recTd(d.rec[key])
+        : recTd(d.rec[key]);
+      return '<tr><td class="indent">' + label + '</td>' + vals + '</tr>';
+    }
+    function rowDesp(label, key) {
+      var vals = isQ1
+        ? negTd(jd.desp[key]) + negTd(fd.desp[key]) + negTd(md.desp[key]) + negTd(d.desp[key])
+        : negTd(d.desp[key]);
+      return '<tr><td class="indent">' + label + '</td>' + vals + '</tr>';
+    }
+    function totalRec() {
+      var vals = isQ1
+        ? boldTd(jd.receita,'revenue-val') + boldTd(fd.receita,'revenue-val') + boldTd(md.receita,'revenue-val') + boldTd(d.receita,'revenue-val')
+        : boldTd(d.receita,'revenue-val');
+      return '<tr class="dre-total"><td>TOTAL RECEITA</td>' + vals + '</tr>';
+    }
+    function totalDesp() {
+      var vals = isQ1
+        ? boldTd(jd.despesas,'negative-val') + boldTd(fd.despesas,'negative-val') + boldTd(md.despesas,'negative-val') + boldTd(d.despesas,'negative-val')
+        : boldTd(d.despesas,'negative-val');
+      return '<tr class="dre-total"><td>TOTAL DESPESAS</td>' + vals + '</tr>';
+    }
+    function resultadoRows() {
+      if (isQ1) {
+        return '<tr class="dre-result-neg"><td><strong>RESULTADO — JAN</strong></td>' + resTd(jd.resultado) + '<td>—</td><td>—</td><td>—</td></tr>' +
+               '<tr class="dre-result-neg"><td><strong>RESULTADO — FEV</strong></td><td>—</td>' + resTd(fd.resultado) + '<td>—</td><td>—</td></tr>' +
+               '<tr class="dre-result"><td><strong>RESULTADO — MAR</strong></td><td>—</td><td>—</td>' + resTd(md.resultado) + '<td>—</td></tr>' +
+               '<tr class="dre-result"><td><strong>RESULTADO Q1</strong></td><td>—</td><td>—</td><td>—</td>' + resTd(d.resultado) + '</tr>';
+      }
+      var cls = d.resultado >= 0 ? 'dre-result' : 'dre-result-neg';
+      return '<tr class="' + cls + '"><td><strong>RESULTADO — ' + d.label.split(' ')[0].toUpperCase() + '</strong></td>' + resTd(d.resultado) + '</tr>';
+    }
+    function sectionHdrDRE(txt) {
+      var colspan = isQ1 ? 5 : 2;
+      return '<tr class="dre-section-header"><td colspan="' + colspan + '">' + txt + '</td></tr>';
+    }
+
+    var theadCols = cols.map(th).join('');
+    var html = '<table class="dre-table"><thead><tr><th style="width:40%">Categoria</th>' + theadCols + '</tr></thead><tbody>';
+    html += sectionHdrDRE('RECEITA BRUTA');
+    html += rowRec('Novos Registros', 'novos');
+    html += rowRec('Procurações', 'proc');
+    html += rowRec('Anuidades', 'anu');
+    html += totalRec();
+    html += sectionHdrDRE('CUSTO DIRETO DO SERVIÇO');
+    html += rowDesp('GRU / INPI', 'gru');
+    html += sectionHdrDRE('DESPESAS OPERACIONAIS');
+    html += rowDesp('Salários', 'salarios');
+    if (isQ1 || d.desp.rescisoes > 0) html += rowDesp('Rescisões', 'rescisoes');
+    html += rowDesp('Impostos (DAS + FGTS + INSS)', 'impostos');
+    html += rowDesp('Aluguel (Curitiba + Cascavel)', 'aluguel');
+    html += rowDesp('Serviço da Dívida', 'divida');
+    html += rowDesp('Marketing e Publicidade', 'marketing');
+    html += rowDesp('Sistemas e Tecnologia', 'sistemas');
+    html += rowDesp('Benefícios (VA/VR/VT)', 'beneficios');
+    html += rowDesp('Retirada dos Sócios', 'socios');
+    html += rowDesp('Demais despesas', 'outros');
+    html += totalDesp();
+    html += resultadoRows();
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
   // Build charts on first load (visão geral tab)
   window.addEventListener('DOMContentLoaded', function() {
-    setTimeout(buildCharts, 300);
+    setPeriodo('q1');
   });
 </script>
 
@@ -1872,6 +1907,14 @@ function exportDRE() {
 
 function buildDREhtml() {
   var logoSrc = document.querySelector('.logo-icon img') ? document.querySelector('.logo-icon img').src : '';
+  var d = PERIODOS[periodoAtual];
+  var pLabel = d.label;
+  var pShort = periodoAtual === 'q1' ? 'Q1 2026' : d.label.split(' ')[0] + ' 2026';
+  var pSub = periodoAtual === 'q1' ? 'Janeiro · Fevereiro · Março' : d.label;
+  var recStr = d.receita.toLocaleString('pt-BR', {minimumFractionDigits:0});
+  var despStr = d.despesas.toLocaleString('pt-BR', {minimumFractionDigits:0});
+  var resStr = (d.resultado > 0 ? '+' : '') + d.resultado.toLocaleString('pt-BR', {minimumFractionDigits:0});
+  var marStr = d.margem.toFixed(1).replace('.',',') + '%';
   return `
   <div style="width:794px;background:#fff;font-family:'Plus Jakarta Sans',Arial,sans-serif;padding:0;margin:0">
 
@@ -1885,23 +1928,23 @@ function buildDREhtml() {
         </div>
       </div>
       <div style="text-align:right">
-        <div style="color:#fff;font-size:14px;font-weight:700">Q1 2026</div>
-        <div style="color:rgba(255,255,255,0.65);font-size:11px;margin-top:2px">Janeiro · Fevereiro · Março</div>
+        <div style="color:#fff;font-size:14px;font-weight:700">${pShort}</div>
+        <div style="color:rgba(255,255,255,0.65);font-size:11px;margin-top:2px">${pSub}</div>
       </div>
     </div>
 
     <!-- KPIs -->
     <div style="background:#0D0D1A;padding:20px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-      ${kpiBox('Receita Q1','R$ 1.978.960','#fff')}
-      ${kpiBox('Despesas Q1','R$ 1.839.041','#E05C5C')}
-      ${kpiBox('Resultado Q1','+R$ 139.919','#2ECC8F')}
-      ${kpiBox('Margem Média','7,1%','#FBBF24')}
+      ${kpiBox('Receita ' + pShort,'R$ ' + recStr,'#fff')}
+      ${kpiBox('Despesas ' + pShort,'R$ ' + despStr,'#E05C5C')}
+      ${kpiBox('Resultado ' + pShort,resStr,'#2ECC8F')}
+      ${kpiBox('Margem Média',marStr,'#FBBF24')}
     </div>
 
     <!-- DRE TABLE -->
     <div style="padding:32px 40px">
       <div style="font-size:11px;font-weight:700;color:#CC0000;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #CC0000">
-        Demonstrativo de Resultado — Q1 2026
+        Demonstrativo de Resultado — ${pLabel}
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:12px">
         <thead>
