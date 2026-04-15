@@ -667,7 +667,7 @@
         <span>CFO Dashboard</span>
       </div>
     </div>
-    <div class="header-badge">Q1 2026 — Janeiro · Fevereiro · Março</div>
+    <div class="header-badge" id="header-badge">Q1 2026 — Janeiro · Fevereiro · Março</div>
   </div>
   <div class="header-right">
     <span class="current-date" id="currentDate"></span>
@@ -677,11 +677,11 @@
 
 <!-- NAV TABS -->
 <div class="nav-tabs">
-  <div class="nav-tab active" onclick="switchTab('visao')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Visão Geral</div>
-  <div class="nav-tab" onclick="switchTab('dre')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>DRE</div>
-  <div class="nav-tab" onclick="switchTab('graficos')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Gráficos</div>
-  <div class="nav-tab" onclick="switchTab('dividas')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Dívidas</div>
-  <div class="nav-tab" onclick="switchTab('provisao')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Provisionamento</div>
+  <div class="nav-tab active" onclick="switchTab('visao',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Visão Geral</div>
+  <div class="nav-tab" onclick="switchTab('dre',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>DRE</div>
+  <div class="nav-tab" onclick="switchTab('graficos',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Gráficos</div>
+  <div class="nav-tab" onclick="switchTab('dividas',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Dívidas</div>
+  <div class="nav-tab" onclick="switchTab('provisao',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Provisionamento</div>
 </div>
 
 
@@ -702,14 +702,14 @@
 
     <div class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-label">Receita Q1 Total</div>
-        <div class="kpi-value gold">R$ 1,979M</div>
-        <div class="kpi-sub">Janeiro + Fevereiro + Março</div>
+        <div class="kpi-label" id="kpi-main-lbl">Receita Q1 Total</div>
+        <div class="kpi-value gold" id="kpi-main-receita">R$ 1,979M</div>
+        <div class="kpi-sub" id="kpi-main-sub">Janeiro + Fevereiro + Março</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Resultado Q1</div>
-        <div class="kpi-value positive">+R$ 139.919</div>
-        <div class="kpi-sub"><span class="kpi-badge badge-up">7,1% de margem</span></div>
+        <div class="kpi-label" id="kpi-res-lbl">Resultado Q1</div>
+        <div class="kpi-value positive" id="kpi-main-resultado">+R$ 139.919</div>
+        <div class="kpi-sub"><span class="kpi-badge badge-up" id="kpi-main-margem">7,1% de margem</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Dívida Total Hoje</div>
@@ -743,7 +743,7 @@
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Receita vs Despesas — Q1</div>
+        <div class="card-title" id="chart-visao-title">Receita vs Despesas — Q1 2026</div>
         <div class="chart-wrap">
           <canvas id="chartVisao"></canvas>
         </div>
@@ -891,20 +891,6 @@
       </div>
     </div>
 
-    <div class="grid-2 mb-20" style="margin-top:24px">
-      <div class="card">
-        <div class="card-title">Evolução do Faturamento por Tipo</div>
-        <div class="chart-wrap">
-          <canvas id="chartFaturamento"></canvas>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Evolução das Principais Despesas</div>
-        <div class="chart-wrap">
-          <canvas id="chartDespEvol"></canvas>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- ── DÍVIDAS ── -->
@@ -1262,11 +1248,12 @@
     new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
   // ── NAVIGATION ──
-  function switchTab(id) {
+  function switchTab(id, el) {
     document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
     document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-    event.currentTarget ? event.currentTarget.classList.add('active') : event.target.classList.add('active');
+    if (el) el.classList.add('active');
     document.getElementById('tab-' + id).classList.add('active');
+    chartsBuilt = false;
     setTimeout(buildCharts, 100);
   }
 
@@ -1325,9 +1312,53 @@
       if (btn) btn.classList.toggle('active', k === p);
     });
     var d = PERIODOS[p];
-    var titleEl = document.getElementById('dre-title-text');
-    if (titleEl) titleEl.textContent = 'Demonstrativo de Resultado — ' + d.label;
+    var isQ1 = p === 'q1';
+
+    // Header badge
+    var hb = document.getElementById('header-badge');
+    if (hb) hb.textContent = d.label;
+
+    // DRE title
+    var dt = document.getElementById('dre-title-text');
+    if (dt) dt.textContent = 'Demonstrativo de Resultado — ' + d.label;
+
+    // KPI cards — Visão Geral
+    var lbl = document.getElementById('kpi-main-lbl');
+    if (lbl) lbl.textContent = 'Receita ' + (isQ1 ? 'Q1' : d.label.split(' ')[0]);
+
+    var kr = document.getElementById('kpi-main-receita');
+    if (kr) {
+      var rv = d.receita;
+      kr.textContent = rv >= 1000000
+        ? 'R$ ' + (rv/1000000).toFixed(2).replace('.',',') + 'M'
+        : 'R$ ' + rv.toLocaleString('pt-BR');
+    }
+
+    var ks = document.getElementById('kpi-main-sub');
+    if (ks) ks.textContent = isQ1 ? 'Janeiro + Fevereiro + Março' : d.label;
+
+    var kres = document.getElementById('kpi-main-resultado');
+    if (kres) {
+      kres.className = 'kpi-value ' + (d.resultado >= 0 ? 'positive' : 'negative');
+      var sign = d.resultado >= 0 ? '+' : '-';
+      kres.textContent = sign + 'R$ ' + Math.abs(d.resultado).toLocaleString('pt-BR');
+    }
+
+    var km = document.getElementById('kpi-main-margem');
+    if (km) {
+      km.className = 'kpi-badge ' + (d.resultado >= 0 ? 'badge-up' : 'badge-down');
+      km.textContent = d.margem.toFixed(1).replace('.',',') + '% de margem';
+    }
+
+    var ct = document.getElementById('chart-visao-title');
+    if (ct) ct.textContent = 'Receita vs Despesas — ' + (isQ1 ? 'Q1 2026' : d.label);
+
+    // Rebuild DRE
     buildDRETable(p);
+
+    // Rebuild chart
+    chartsBuilt = false;
+    setTimeout(buildCharts, 50);
   }
 
   // ── BUILD DRE TABLE ──
@@ -1557,41 +1588,54 @@
   Chart.defaults.font.family = 'Plus Jakarta Sans';
 
   var chartsBuilt = false;
+  var chartInstances = {};
+
+  function destroyChart(id) {
+    if (chartInstances[id]) { try { chartInstances[id].destroy(); } catch(e){} delete chartInstances[id]; }
+  }
 
   function buildCharts() {
     if (chartsBuilt) return;
     chartsBuilt = true;
 
-    var months = ['Janeiro', 'Fevereiro', 'Março'];
-    var receita = [346096, 457753, 1175111];
-    var despesas = [502670, 478164, 858207];
-    var resultado = [-156574, -20411, 316904];
+    var p = periodoAtual;
+    var isQ1 = p === 'q1';
+    var d = PERIODOS[p];
+    var months = isQ1 ? ['Janeiro', 'Fevereiro', 'Março'] : [d.label.split(' ')[0]];
+    var receita  = isQ1 ? [346096, 457753, 1175111] : [d.receita];
+    var despesas = isQ1 ? [502670, 478164, 858207]  : [d.despesas];
+    var resultado = isQ1 ? [-156574, -20411, 316904] : [d.resultado];
+
+    var commonOpts = {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + Math.abs(c.raw).toLocaleString('pt-BR'); } } } },
+      scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (Math.abs(v)/1000).toFixed(0) + 'k'; } } } }
+    };
 
     // ── VISÃO GERAL — bar ──
+    destroyChart('chartVisao');
     var cv = document.getElementById('chartVisao');
     if (cv) {
-      new Chart(cv, {
+      chartInstances['chartVisao'] = new Chart(cv, {
         type: 'bar',
         data: {
           labels: months,
           datasets: [
-            { label: 'Receita', data: receita, backgroundColor: 'rgba(46,204,143,0.75)', borderColor: '#2ECC8F', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Despesas', data: despesas, backgroundColor: 'rgba(229,53,53,0.55)', borderColor: '#E53535', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Resultado', data: resultado, backgroundColor: resultado.map(function(v){ return v >= 0 ? 'rgba(46,204,143,0.95)' : 'rgba(224,92,92,0.9)'; }), borderColor: resultado.map(function(v){ return v >= 0 ? '#2ECC8F' : '#E05C5C'; }), borderWidth: 1.5, borderRadius: 6 }
+            { label: 'Receita',    data: receita,   backgroundColor: 'rgba(46,204,143,0.75)', borderColor: '#2ECC8F', borderWidth: 1.5, borderRadius: 6 },
+            { label: 'Despesas',   data: despesas,  backgroundColor: 'rgba(229,53,53,0.55)',  borderColor: '#E53535', borderWidth: 1.5, borderRadius: 6 },
+            { label: 'Resultado',  data: resultado, backgroundColor: resultado.map(function(v){ return v >= 0 ? 'rgba(46,204,143,0.95)' : 'rgba(224,92,92,0.9)'; }), borderColor: resultado.map(function(v){ return v >= 0 ? '#2ECC8F' : '#E05C5C'; }), borderWidth: 1.5, borderRadius: 6 }
           ]
         },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + Math.abs(c.raw).toLocaleString('pt-BR'); } } } },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } } } }
-        }
+        options: Object.assign({}, commonOpts, { plugins: Object.assign({}, commonOpts.plugins, { legend: { position: 'top' } }) }
+        )
       });
     }
 
     // ── RECEITA × DESPESAS × RESULTADO ──
+    destroyChart('chartRecDesp');
     var crd = document.getElementById('chartRecDesp');
     if (crd) {
-      new Chart(crd, {
+      chartInstances['chartRecDesp'] = new Chart(crd, {
         type: 'bar',
         data: {
           labels: months,
@@ -1610,9 +1654,10 @@
     }
 
     // ── TIPO DE RECEITA ──
+    destroyChart('chartTipoRec');
     var ctr = document.getElementById('chartTipoRec');
     if (ctr) {
-      new Chart(ctr, {
+      chartInstances['chartTipoRec'] = new Chart(ctr, {
         type: 'bar',
         data: {
           labels: months,
@@ -1631,9 +1676,10 @@
     }
 
     // ── DESPESAS MARÇO — DONUT ──
+    destroyChart('chartDesp');
     var cd = document.getElementById('chartDesp');
     if (cd) {
-      new Chart(cd, {
+      chartInstances['chartDesp'] = new Chart(cd, {
         type: 'doughnut',
         data: {
           labels: ['Salários', 'Impostos', 'GRU/INPI', 'Retirada Sócios', 'Dívida', 'Aluguel', 'Rescisões', 'Benefícios', 'Marketing', 'Sistemas', 'Outros'],
@@ -1655,9 +1701,10 @@
     }
 
     // ── GRU TREND — LINE ──
+    destroyChart('chartGru');
     var cg = document.getElementById('chartGru');
     if (cg) {
-      new Chart(cg, {
+      chartInstances['chartGru'] = new Chart(cg, {
         type: 'line',
         data: {
           labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril'],
@@ -1688,9 +1735,10 @@
     }
 
     // ── EVOLUÇÃO DO FATURAMENTO — Line ──
+    destroyChart('chartFaturamento');
     var cf = document.getElementById('chartFaturamento');
     if (cf) {
-      new Chart(cf, {
+      chartInstances['chartFaturamento'] = new Chart(cf, {
         type: 'line',
         data: {
           labels: months,
@@ -1754,9 +1802,10 @@
     }
 
     // ── EVOLUÇÃO DAS DESPESAS — Line ──
+    destroyChart('chartDespEvol');
     var cde = document.getElementById('chartDespEvol');
     if (cde) {
-      new Chart(cde, {
+      chartInstances['chartDespEvol'] = new Chart(cde, {
         type: 'line',
         data: {
           labels: months,
@@ -1825,142 +1874,10 @@
     }
 
     // ── EVOLUÇÃO DO FATURAMENTO — Line ──
-    var cf = document.getElementById('chartFaturamento');
-    if (cf) {
-      new Chart(cf, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Novos Registros',
-              data: [346096, 457753, 502862],
-              borderColor: '#E53535',
-              backgroundColor: 'rgba(229,53,53,0.12)',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#E53535',
-              pointRadius: 5,
-              fill: true,
-              tension: 0.35
-            },
-            {
-              label: 'Procurações',
-              data: [0, 0, 655614],
-              borderColor: '#4A90D9',
-              backgroundColor: 'rgba(74,144,217,0.10)',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#4A90D9',
-              pointRadius: 5,
-              fill: true,
-              tension: 0.35
-            },
-            {
-              label: 'Anuidades',
-              data: [0, 0, 16635],
-              borderColor: '#FBBF24',
-              backgroundColor: 'rgba(251,191,36,0.10)',
-              borderWidth: 2,
-              pointBackgroundColor: '#FBBF24',
-              pointRadius: 5,
-              fill: false,
-              tension: 0.35
-            },
-            {
-              label: 'Total',
-              data: [346096, 457753, 1175111],
-              borderColor: '#2ECC8F',
-              backgroundColor: 'rgba(46,204,143,0.06)',
-              borderWidth: 3,
-              pointBackgroundColor: '#2ECC8F',
-              pointRadius: 6,
-              fill: true,
-              tension: 0.35,
-              borderDash: [6,3]
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 14, padding: 14 } },
-            tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + c.raw.toLocaleString('pt-BR'); } } }
-          },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } }, min: 0 } }
-        }
-      });
-    }
+    
 
     // ── EVOLUÇÃO DAS DESPESAS — Line ──
-    var cde = document.getElementById('chartDespEvol');
-    if (cde) {
-      new Chart(cde, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Salários',
-              data: [84478, 74091, 81131],
-              borderColor: '#4A90D9',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#4A90D9',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Impostos',
-              data: [99123, 82131, 76732],
-              borderColor: '#E53535',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#E53535',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'GRU/INPI',
-              data: [37800, 55850, 78400],
-              borderColor: '#FBBF24',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#FBBF24',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Aluguel',
-              data: [28816, 30600, 30600],
-              borderColor: '#8B5CF6',
-              backgroundColor: 'transparent',
-              borderWidth: 2,
-              pointBackgroundColor: '#8B5CF6',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Serviço Dívida',
-              data: [26283, 26283, 46370],
-              borderColor: '#F97316',
-              backgroundColor: 'transparent',
-              borderWidth: 2,
-              pointBackgroundColor: '#F97316',
-              pointRadius: 5,
-              tension: 0.35
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 14, padding: 14 } },
-            tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + c.raw.toLocaleString('pt-BR'); } } }
-          },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } }, min: 0 } }
-        }
-      });
-    }
-  }
+      }
 
   // Build charts on first load (visão geral tab)
   window.addEventListener('DOMContentLoaded', function() {
