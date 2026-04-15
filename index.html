@@ -693,6 +693,7 @@
   <button class="period-btn" id="pbtn-jan" onclick="setPeriodo('jan')">Janeiro</button>
   <button class="period-btn" id="pbtn-fev" onclick="setPeriodo('fev')">Fevereiro</button>
   <button class="period-btn" id="pbtn-mar" onclick="setPeriodo('mar')">Março</button>
+  <button class="period-btn" id="pbtn-abr" onclick="setPeriodo('abr')">Abril <span style="font-size:10px;opacity:0.55;font-weight:400">prev.</span></button>
   <button class="period-btn active" id="pbtn-q1" onclick="setPeriodo('q1')">Q1 2026</button>
 </div>
 
@@ -1328,6 +1329,14 @@
               divida: 46370, marketing: 8535, sistemas: 15287, beneficios: 17397,
               socios: 375000, internacional: 3744, relatorios: 8100, honorarios: 2850, outros: 288782 }
     },
+    abr: {
+      label: 'Abril 2026',
+      receita: 0, despesas: 337764, resultado: -337764, margem: 0.0, gru: 0,
+      rec: { novos: 0, proc: 0, anu: 0 },
+      desp: { salarios: 109670, rescisoes: 0, impostos: 0, gru: 0, aluguel: 30600,
+              divida: 40987, marketing: 0, sistemas: 14667, beneficios: 17943,
+              socios: 120000, internacional: 0, relatorios: 0, honorarios: 0, outros: 3897 }
+    },
     q1: {
       label: 'Q1 2026 — Jan · Fev · Mar',
       receita: 1978960, despesas: 2062834, resultado: -83874, margem: -4.2, gru: 172050,
@@ -1352,7 +1361,7 @@
   // ── SET PERÍODO ──
   function setPeriodo(p) {
     periodoAtual = p;
-    ['jan','fev','mar','q1'].forEach(function(k) {
+    ['jan','fev','mar','abr','q1'].forEach(function(k) {
       var btn = document.getElementById('pbtn-' + k);
       if (btn) btn.classList.toggle('active', k === p);
     });
