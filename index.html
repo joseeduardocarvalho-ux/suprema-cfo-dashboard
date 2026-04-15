@@ -884,23 +884,10 @@
       </div>
     </div>
 
-    <div class="grid-2 mb-20" style="margin-top:24px">
-      <div class="card">
-        <div class="card-title">Evolução do Faturamento por Tipo</div>
-        <div class="chart-wrap">
-          <canvas id="chartFaturamento"></canvas>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Evolução das Principais Despesas</div>
-        <div class="chart-wrap">
-          <canvas id="chartDespEvol"></canvas>
-        </div>
-      </div>
-    </div>
+
   </div>
 
-  <!-- ── DÍVIDAS ── -->
+  <!-- ── DÍVIDAS ── -->  <!-- ── DÍVIDAS ── -->
   <div class="section" id="tab-dividas">
     <div class="kpi-grid mb-20">
       <div class="kpi-card">
@@ -1539,179 +1526,37 @@
       });
     }
 
-    // ── EVOLUÇÃO DO FATURAMENTO — Line ──
-    var cf = document.getElementById('chartFaturamento');
-    if (cf) {
-      new Chart(cf, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Novos Registros',
-              data: [346096, 457753, 502862],
-              borderColor: '#E53535',
-              backgroundColor: 'rgba(229,53,53,0.12)',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#E53535',
-              pointRadius: 5,
-              fill: true,
-              tension: 0.35
-            },
-            {
-              label: 'Procurações',
-              data: [0, 0, 655614],
-              borderColor: '#4A90D9',
-              backgroundColor: 'rgba(74,144,217,0.10)',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#4A90D9',
-              pointRadius: 5,
-              fill: true,
-              tension: 0.35
-            },
-            {
-              label: 'Anuidades',
-              data: [0, 0, 16635],
-              borderColor: '#FBBF24',
-              backgroundColor: 'rgba(251,191,36,0.10)',
-              borderWidth: 2,
-              pointBackgroundColor: '#FBBF24',
-              pointRadius: 5,
-              fill: false,
-              tension: 0.35
-            },
-            {
-              label: 'Total',
-              data: [346096, 457753, 1175111],
-              borderColor: '#2ECC8F',
-              backgroundColor: 'rgba(46,204,143,0.06)',
-              borderWidth: 3,
-              pointBackgroundColor: '#2ECC8F',
-              pointRadius: 6,
-              fill: true,
-              tension: 0.35,
-              borderDash: [6,3]
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 14, padding: 14 } },
-            tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + c.raw.toLocaleString('pt-BR'); } } }
-          },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } }, min: 0 } }
-        }
-      });
-    }
-
-    // ── EVOLUÇÃO DAS DESPESAS — Line ──
-    var cde = document.getElementById('chartDespEvol');
-    if (cde) {
-      new Chart(cde, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Salários',
-              data: [84478, 74091, 81131],
-              borderColor: '#4A90D9',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#4A90D9',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Impostos',
-              data: [99123, 82131, 76732],
-              borderColor: '#E53535',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#E53535',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'GRU/INPI',
-              data: [37800, 55850, 78400],
-              borderColor: '#FBBF24',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#FBBF24',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Aluguel',
-              data: [28816, 30600, 30600],
-              borderColor: '#8B5CF6',
-              backgroundColor: 'transparent',
-              borderWidth: 2,
-              pointBackgroundColor: '#8B5CF6',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Serviço Dívida',
-              data: [26283, 26283, 46370],
-              borderColor: '#F97316',
-              backgroundColor: 'transparent',
-              borderWidth: 2,
-              pointBackgroundColor: '#F97316',
-              pointRadius: 5,
-              tension: 0.35
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 14, padding: 14 } },
-            tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + c.raw.toLocaleString('pt-BR'); } } }
-          },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } }, min: 0 } }
-        }
-      });
-    }
-  }
 
   // ── DADOS POR PERÍODO ──
-  var PERIODOS = {
+  const PERIODOS = {
     jan: {
-      label: 'Janeiro 2026',
-      receita: 346096, despesas: 502670, resultado: -156574, margem: -45.2, gru: 37800,
+      label: 'Janeiro 2026', receita: 346096, despesas: 502670, resultado: -156574, margem: -45.2, gru: 37800,
       rec: { novos: 346096, proc: 0, anu: 0 },
-      desp: { salarios: 84478, rescisoes: 0, impostos: 99123, gru: 37800, aluguel: 28816, divida: 26283, marketing: 12483, sistemas: 15191, beneficios: 16925, socios: 110000, outros: 71571 }
+      desp: { salarios: 84478, rescisoes: 0, impostos: 99123, gru: 37800, aluguel: 28816, divida: 26283, marketing: 12483, sistemas: 15191, beneficios: 16925, socios: 110000, internacional: 0, relatorios: 1760, honorarios: 2750, outros: 66281 }
     },
     fev: {
-      label: 'Fevereiro 2026',
-      receita: 457753, despesas: 478164, resultado: -20411, margem: -4.5, gru: 55850,
+      label: 'Fevereiro 2026', receita: 457753, despesas: 478164, resultado: -20411, margem: -4.5, gru: 55850,
       rec: { novos: 457753, proc: 0, anu: 0 },
-      desp: { salarios: 74091, rescisoes: 0, impostos: 82131, gru: 55850, aluguel: 30600, divida: 26283, marketing: 10546, sistemas: 15191, beneficios: 22311, socios: 80000, outros: 81161 }
+      desp: { salarios: 74091, rescisoes: 0, impostos: 82131, gru: 55850, aluguel: 30600, divida: 26283, marketing: 10546, sistemas: 15191, beneficios: 22311, socios: 80000, internacional: 26359, relatorios: 4040, honorarios: 2750, outros: 48012 }
     },
     mar: {
-      label: 'Março 2026',
-      receita: 1175111, despesas: 858207, resultado: 316904, margem: 27.0, gru: 78400,
+      label: 'Março 2026', receita: 1175111, despesas: 858207, resultado: 316904, margem: 27.0, gru: 78400,
       rec: { novos: 502862, proc: 655614, anu: 16635 },
-      desp: { salarios: 81131, rescisoes: 49072, impostos: 76732, gru: 78400, aluguel: 30600, divida: 46370, marketing: 8535, sistemas: 15287, beneficios: 17397, socios: 375000, outros: 75683 }
+      desp: { salarios: 81131, rescisoes: 49072, impostos: 76732, gru: 78400, aluguel: 30600, divida: 46370, marketing: 8535, sistemas: 15287, beneficios: 17397, socios: 375000, internacional: 3744, relatorios: 8100, honorarios: 2850, outros: 64989 }
     },
     q1: {
-      label: 'Q1 2026 — Jan · Fev · Mar',
-      receita: 1978960, despesas: 1839041, resultado: 139919, margem: 7.1, gru: 172050,
+      label: 'Q1 2026 — Jan · Fev · Mar', receita: 1978960, despesas: 1839041, resultado: 139919, margem: 7.1, gru: 172050,
       rec: { novos: 1306711, proc: 655614, anu: 16635 },
-      desp: { salarios: 239700, rescisoes: 49072, impostos: 257986, gru: 172050, aluguel: 90016, divida: 98936, marketing: 31564, sistemas: 45669, beneficios: 56633, socios: 565000, outros: 228415 }
+      desp: { salarios: 239700, rescisoes: 49072, impostos: 257986, gru: 172050, aluguel: 90016, divida: 98936, marketing: 31564, sistemas: 45669, beneficios: 56633, socios: 565000, internacional: 30103, relatorios: 13900, honorarios: 8350, outros: 179282 }
     }
   };
-  var periodoAtual = 'q1';
+  let periodoAtual = 'q1';
 
   function fmtBRL(v) {
-    if (v === 0) return '—';
-    var abs = Math.abs(v);
-    var str = 'R$ ' + abs.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
-    return (v < 0 ? '-' : '') + str;
+    if (!v) return '—';
+    return 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
   }
+
   function fmtBRLplus(v) {
     if (v === 0) return '—';
     var abs = Math.abs(v);
