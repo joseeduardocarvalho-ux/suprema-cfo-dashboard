@@ -1702,7 +1702,7 @@
 
     var wrap = document.createElement('div');
     wrap.id = 'dre-render-wrap';
-    wrap.style.cssText = 'position:fixed;left:-9999px;top:0;background:white;width:' + pageW + ';padding:12mm 15mm 10mm 15mm;font-family:Arial,sans-serif;color:#000;box-sizing:border-box;';
+    wrap.style.cssText = 'position:absolute;left:0;top:0;z-index:-9999;background:white;width:' + pageW + ';padding:12mm 15mm 10mm 15mm;font-family:Arial,sans-serif;color:#000;box-sizing:border-box;';
     wrap.innerHTML =
       '<div style="display:flex;align-items:center;gap:14px;margin-bottom:6mm;">'
       + '<img src="' + LOGO_DRE + '" style="height:50px;">'
@@ -1720,8 +1720,11 @@
 
     document.body.appendChild(wrap);
 
+    var wPx = isQ1 ? 1123 : 794;
     html2canvas(wrap, {
       scale: 3,
+      windowWidth: wPx,
+      windowHeight: isQ1 ? 794 : 1123,
       useCORS: false,
       allowTaint: true,
       backgroundColor: '#ffffff',
@@ -1729,29 +1732,19 @@
     }).then(function(canvas) {
       if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
 
-      var pdf     = new window.jspdf.jsPDF({ orientation: isQ1 ? 'landscape' : 'portrait', unit: 'mm', format: 'a4' });
-      var pw      = pdf.internal.pageSize.getWidth();
-      var ph      = pdf.internal.pageSize.getHeight();
-      var cw      = canvas.width;
-      var ch      = canvas.height;
-      var scale2  = pw / cw;
-      var totalH  = ch * scale2;
-      var pages   = Math.ceil(totalH / ph);
-      var pixPP   = ch / pages;
-
-      for (var pg = 0; pg < pages; pg++) {
-        if (pg > 0) pdf.addPage();
-        var sub = document.createElement('canvas');
-        var sy  = Math.floor(pg * pixPP);
-        var sh  = Math.min(Math.ceil(pixPP), ch - sy);
-        sub.width  = cw;
-        sub.height = Math.ceil(pixPP);
-        var ctx = sub.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, sub.width, sub.height);
-        ctx.drawImage(canvas, 0, sy, cw, sh, 0, 0, cw, sh);
-        pdf.addImage(sub.toDataURL('image/png'), 'PNG', 0, 0, pw, ph);
+      var pdf = new window.jspdf.jsPDF({ orientation: isQ1 ? 'landscape' : 'portrait', unit: 'mm', format: 'a4' });
+      var pw  = pdf.internal.pageSize.getWidth();
+      var ph  = pdf.internal.pageSize.getHeight();
+      var cw  = canvas.width;
+      var ch  = canvas.height;
+      // Scale to fit full page width; if taller than page, scale down proportionally
+      var imgW = pw;
+      var imgH = ch * (pw / cw);
+      if (imgH > ph) {
+        imgH = ph;
+        imgW = cw * (ph / ch);
       }
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgW, imgH);
       pdf.save('DRE-Suprema-' + p.toUpperCase() + '-2026.pdf');
     });
   }
