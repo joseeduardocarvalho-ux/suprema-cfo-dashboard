@@ -1771,20 +1771,27 @@
     var container = document.getElementById('dre-container');
     if (!container) return;
     var isQ1 = p === 'q1';
-    var cols = isQ1
-      ? ['Janeiro', 'Fevereiro', 'Março', 'Q1 Total']
-      : [d.label.split(' ')[0]];
-
     var jd = PERIODOS.jan, fd = PERIODOS.fev, md = PERIODOS.mar;
 
     function th(txt) { return '<th>' + txt + '</th>'; }
-    function recTd(v) { return '<td class="revenue-val">' + (v ? fmtBRL(v) : '—') + '</td>'; }
-    function negTd(v) { return '<td class="negative-val">' + (v ? fmtBRL(v) : '—') + '</td>'; }
-    function boldTd(v, cls) { return '<td class="' + cls + '"><strong>' + fmtBRL(v) + '</strong></td>'; }
+
+    function recTd(v) {
+      return '<td class="revenue-val">' + (v ? fmtBRL(v) : '<span style="color:rgba(255,255,255,0.2)">—</span>') + '</td>';
+    }
+    function negTd(v) {
+      return '<td class="negative-val">' + (v ? fmtBRL(v) : '<span style="color:rgba(255,255,255,0.2)">—</span>') + '</td>';
+    }
+    function boldRecTd(v) {
+      return '<td class="revenue-val"><strong>' + fmtBRL(v) + '</strong></td>';
+    }
+    function boldNegTd(v) {
+      return '<td class="negative-val"><strong>' + fmtBRL(v) + '</strong></td>';
+    }
     function resTd(v) {
       var cls = v > 0 ? 'positive-val' : 'negative-val';
       return '<td class="' + cls + '"><strong>' + fmtBRLplus(v) + '</strong></td>';
     }
+    function dashTd() { return '<td style="color:rgba(255,255,255,0.15);text-align:right">—</td>'; }
 
     function rowRec(label, key) {
       var vals = isQ1
@@ -1800,59 +1807,71 @@
     }
     function totalRec() {
       var vals = isQ1
-        ? boldTd(jd.receita,'revenue-val') + boldTd(fd.receita,'revenue-val') + boldTd(md.receita,'revenue-val') + boldTd(d.receita,'revenue-val')
-        : boldTd(d.receita,'revenue-val');
+        ? boldRecTd(jd.receita) + boldRecTd(fd.receita) + boldRecTd(md.receita) + boldRecTd(d.receita)
+        : boldRecTd(d.receita);
       return '<tr class="dre-total"><td>TOTAL RECEITA</td>' + vals + '</tr>';
     }
     function totalDesp() {
       var vals = isQ1
-        ? boldTd(jd.despesas,'negative-val') + boldTd(fd.despesas,'negative-val') + boldTd(md.despesas,'negative-val') + boldTd(d.despesas,'negative-val')
-        : boldTd(d.despesas,'negative-val');
+        ? boldNegTd(jd.despesas) + boldNegTd(fd.despesas) + boldNegTd(md.despesas) + boldNegTd(d.despesas)
+        : boldNegTd(d.despesas);
       return '<tr class="dre-total"><td>TOTAL DESPESAS</td>' + vals + '</tr>';
     }
     function resultadoRows() {
       if (isQ1) {
-        return '<tr class="dre-result-neg"><td><strong>RESULTADO — JAN</strong></td>' + resTd(jd.resultado) + '<td>—</td><td>—</td><td>—</td></tr>' +
-               '<tr class="dre-result-neg"><td><strong>RESULTADO — FEV</strong></td><td>—</td>' + resTd(fd.resultado) + '<td>—</td><td>—</td></tr>' +
-               '<tr class="dre-result"><td><strong>RESULTADO — MAR</strong></td><td>—</td><td>—</td>' + resTd(md.resultado) + '<td>—</td></tr>' +
-               '<tr class="dre-result"><td><strong>RESULTADO Q1</strong></td><td>—</td><td>—</td><td>—</td>' + resTd(d.resultado) + '</tr>';
+        return '<tr class="dre-result-neg"><td><strong>RESULTADO — JAN</strong></td>' + resTd(jd.resultado) + dashTd() + dashTd() + dashTd() + '</tr>' +
+               '<tr class="dre-result-neg"><td><strong>RESULTADO — FEV</strong></td>' + dashTd() + resTd(fd.resultado) + dashTd() + dashTd() + '</tr>' +
+               '<tr class="dre-result"><td><strong>RESULTADO — MAR</strong></td>' + dashTd() + dashTd() + resTd(md.resultado) + dashTd() + '</tr>' +
+               '<tr class="dre-result"><td><strong>RESULTADO Q1</strong></td>' + dashTd() + dashTd() + dashTd() + resTd(d.resultado) + '</tr>';
       }
       var cls = d.resultado >= 0 ? 'dre-result' : 'dre-result-neg';
-      return '<tr class="' + cls + '"><td><strong>RESULTADO — ' + d.label.split(' ')[0].toUpperCase() + '</strong></td>' + resTd(d.resultado) + '</tr>';
+      var name = p === 'jan' ? 'JAN' : p === 'fev' ? 'FEV' : 'MAR';
+      return '<tr class="' + cls + '"><td><strong>RESULTADO — ' + name + '</strong></td>' + resTd(d.resultado) + '</tr>';
     }
-    function sectionHdrDRE(txt) {
+    function sectionHdr(txt) {
       var colspan = isQ1 ? 5 : 2;
       return '<tr class="dre-section-header"><td colspan="' + colspan + '">' + txt + '</td></tr>';
     }
 
-    var theadCols = cols.map(th).join('');
-    var html = '<table class="dre-table"><thead><tr><th style="width:40%">Categoria</th>' + theadCols + '</tr></thead><tbody>';
-    html += sectionHdrDRE('RECEITA BRUTA');
+    var colHeaders = isQ1
+      ? '<th>Janeiro</th><th>Fevereiro</th><th>Março</th><th>Q1 Total</th>'
+      : '<th>' + d.label.split(' ')[0] + '</th>';
+
+    var html = '<table class="dre-table"><thead><tr><th style="width:42%">Categoria</th>' + colHeaders + '</tr></thead><tbody>';
+    html += sectionHdr('RECEITA BRUTA');
     html += rowRec('Novos Registros', 'novos');
     html += rowRec('Procurações', 'proc');
     html += rowRec('Anuidades', 'anu');
     html += totalRec();
-    html += sectionHdrDRE('CUSTO DIRETO DO SERVIÇO');
+    html += sectionHdr('CUSTO DIRETO DO SERVIÇO');
     html += rowDesp('GRU / INPI', 'gru');
-    html += sectionHdrDRE('DESPESAS OPERACIONAIS');
+    html += rowDesp('Correspondente Internacional', 'internacional');
+    html += rowDesp('Relatórios de Patente (Foster PI)', 'relatorios');
+    html += sectionHdr('PESSOAL');
     html += rowDesp('Salários', 'salarios');
-    if (isQ1 || d.desp.rescisoes > 0) html += rowDesp('Rescisões', 'rescisoes');
-    html += rowDesp('Impostos (DAS + FGTS + INSS)', 'impostos');
-    html += rowDesp('Aluguel (Curitiba + Cascavel)', 'aluguel');
-    html += rowDesp('Serviço da Dívida', 'divida');
+    if (isQ1 || d.desp.rescisoes > 0) html += rowDesp('Rescisões / Verbas Rescisórias', 'rescisoes');
+    html += rowDesp('Benefícios (VA + VR + VT)', 'beneficios');
+    html += sectionHdr('IMPOSTOS E OBRIGAÇÕES');
+    html += rowDesp('DAS (Simples Nacional — Marcas + Serviços)', 'impostos');
+    html += sectionHdr('INFRAESTRUTURA E INSTALAÇÕES');
+    html += rowDesp('Aluguel Curitiba (Adriana Araujo)', 'aluguel');
+    html += rowDesp('Sistemas e Tecnologia (APOL + Drive + Ponto)', 'sistemas');
+    html += sectionHdr('FINANCEIRO');
+    html += rowDesp('Serviço da Dívida (3 contratos)', 'divida');
+    html += rowDesp('Honorários Advocatícios', 'honorarios');
+    html += sectionHdr('VENDAS E MARKETING');
     html += rowDesp('Marketing e Publicidade', 'marketing');
-    html += rowDesp('Sistemas e Tecnologia', 'sistemas');
-    html += rowDesp('Benefícios (VA/VR/VT)', 'beneficios');
+    html += sectionHdr('RETIRADA DOS SÓCIOS');
     html += rowDesp('Retirada dos Sócios', 'socios');
-    html += rowDesp('Demais despesas', 'outros');
+    html += sectionHdr('OUTRAS DESPESAS');
+    html += rowDesp('Demais despesas operacionais', 'outros');
     html += totalDesp();
     html += resultadoRows();
     html += '</tbody></table>';
     container.innerHTML = html;
   }
 
-  // Build charts on first load (visão geral tab)
-  window.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('DOMContentLoaded', function() {
     setPeriodo('q1');
   });
 </script>
@@ -1907,119 +1926,165 @@ function exportDRE() {
 
 function buildDREhtml() {
   var logoSrc = document.querySelector('.logo-icon img') ? document.querySelector('.logo-icon img').src : '';
-  var d = PERIODOS[periodoAtual];
-  var pLabel = d.label;
-  var pShort = periodoAtual === 'q1' ? 'Q1 2026' : d.label.split(' ')[0] + ' 2026';
-  var pSub = periodoAtual === 'q1' ? 'Janeiro · Fevereiro · Março' : d.label;
-  var recStr = d.receita.toLocaleString('pt-BR', {minimumFractionDigits:0});
-  var despStr = d.despesas.toLocaleString('pt-BR', {minimumFractionDigits:0});
-  var resStr = (d.resultado > 0 ? '+' : '') + d.resultado.toLocaleString('pt-BR', {minimumFractionDigits:0});
-  var marStr = d.margem.toFixed(1).replace('.',',') + '%';
-  return `
-  <div style="width:794px;background:#fff;font-family:'Plus Jakarta Sans',Arial,sans-serif;padding:0;margin:0">
+  var p = periodoAtual;
+  var d = PERIODOS[p];
+  var isQ1 = p === 'q1';
+  var pShort = isQ1 ? 'Q1 2026' : d.label.split(' ')[0] + ' 2026';
+  var pSub   = isQ1 ? 'Janeiro · Fevereiro · Março' : d.label;
+  var jd = PERIODOS.jan, fd = PERIODOS.fev, md = PERIODOS.mar;
 
-    <!-- HEADER -->
-    <div style="background:#CC0000;padding:28px 40px;display:flex;align-items:center;justify-content:space-between">
-      <div style="display:flex;align-items:center;gap:14px">
-        <img src="${logoSrc}" style="width:44px;height:44px;border-radius:8px" />
-        <div>
-          <div style="color:#fff;font-size:18px;font-weight:800;letter-spacing:0.3px">Suprema Patentes</div>
-          <div style="color:rgba(255,255,255,0.75);font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Demonstrativo de Resultado do Exercício</div>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div style="color:#fff;font-size:14px;font-weight:700">${pShort}</div>
-        <div style="color:rgba(255,255,255,0.65);font-size:11px;margin-top:2px">${pSub}</div>
-      </div>
-    </div>
+  // ── helpers PDF (dark theme, period-aware) ──
+  function pKpi(lbl, val, col) {
+    return '<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px;text-align:center">'
+      + '<div style="font-size:9px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">' + lbl + '</div>'
+      + '<div style="font-size:16px;font-weight:800;color:' + col + '">' + val + '</div></div>';
+  }
+  function pSecHdr(txt) {
+    var span = isQ1 ? 5 : 2;
+    return '<tr><td colspan="' + span + '" style="background:rgba(255,255,255,0.05);font-size:9px;font-weight:700;color:#E53535;text-transform:uppercase;letter-spacing:0.8px;padding:7px 14px">' + txt + '</td></tr>';
+  }
+  function pRecTd(v) {
+    var s = v ? fmtBRL(v) : '—';
+    return '<td style="padding:7px 14px;text-align:right;color:#2ECC8F;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px">' + s + '</td>';
+  }
+  function pNegTd(v) {
+    var s = v ? fmtBRL(v) : '—';
+    return '<td style="padding:7px 14px;text-align:right;color:#E05C5C;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px">' + s + '</td>';
+  }
+  function pTotalTd(v, col) {
+    return '<td style="padding:9px 14px;text-align:right;color:' + col + ';font-weight:800;font-size:12px;background:rgba(255,255,255,0.04)"><strong>' + fmtBRL(v) + '</strong></td>';
+  }
+  function pResTd(v) {
+    var col = v >= 0 ? '#2ECC8F' : '#E05C5C';
+    var bg  = v >= 0 ? 'rgba(46,204,143,0.12)' : 'rgba(224,92,92,0.12)';
+    return '<td style="padding:10px 14px;text-align:right;color:' + col + ';font-weight:800;font-size:13px;background:' + bg + '"><strong>' + fmtBRLplus(v) + '</strong></td>';
+  }
+  function pDashTd() {
+    return '<td style="padding:7px 14px;text-align:right;color:rgba(255,255,255,0.15);font-size:11px">—</td>';
+  }
+  function catTd(txt, indent) {
+    return '<td style="padding:7px 14px;color:rgba(255,255,255,0.75);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px;padding-left:' + (indent ? '24px' : '14px') + '">' + txt + '</td>';
+  }
+  function totalCatTd(txt) {
+    return '<td style="padding:9px 14px;color:#fff;font-weight:800;font-size:12px;background:rgba(255,255,255,0.04)">' + txt + '</td>';
+  }
+  function resCatTd(txt, v) {
+    var bg = v >= 0 ? 'rgba(46,204,143,0.12)' : 'rgba(224,92,92,0.12)';
+    return '<td style="padding:10px 14px;color:#fff;font-weight:800;font-size:13px;background:' + bg + '">' + txt + '</td>';
+  }
 
-    <!-- KPIs -->
-    <div style="background:#0D0D1A;padding:20px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-      ${kpiBox('Receita ' + pShort,'R$ ' + recStr,'#fff')}
-      ${kpiBox('Despesas ' + pShort,'R$ ' + despStr,'#E05C5C')}
-      ${kpiBox('Resultado ' + pShort,resStr,'#2ECC8F')}
-      ${kpiBox('Margem Média',marStr,'#FBBF24')}
-    </div>
+  function rowRec(lbl, key) {
+    var vals = isQ1
+      ? pRecTd(jd.rec[key]) + pRecTd(fd.rec[key]) + pRecTd(md.rec[key]) + pRecTd(d.rec[key])
+      : pRecTd(d.rec[key]);
+    return '<tr>' + catTd(lbl, true) + vals + '</tr>';
+  }
+  function rowDesp(lbl, key) {
+    var vals = isQ1
+      ? pNegTd(jd.desp[key]) + pNegTd(fd.desp[key]) + pNegTd(md.desp[key]) + pNegTd(d.desp[key])
+      : pNegTd(d.desp[key]);
+    return '<tr>' + catTd(lbl, true) + vals + '</tr>';
+  }
+  function totalRec() {
+    var vals = isQ1
+      ? pTotalTd(jd.receita,'#2ECC8F') + pTotalTd(fd.receita,'#2ECC8F') + pTotalTd(md.receita,'#2ECC8F') + pTotalTd(d.receita,'#2ECC8F')
+      : pTotalTd(d.receita,'#2ECC8F');
+    return '<tr>' + totalCatTd('TOTAL RECEITA') + vals + '</tr>';
+  }
+  function totalDesp() {
+    var vals = isQ1
+      ? pTotalTd(jd.despesas,'#E05C5C') + pTotalTd(fd.despesas,'#E05C5C') + pTotalTd(md.despesas,'#E05C5C') + pTotalTd(d.despesas,'#E05C5C')
+      : pTotalTd(d.despesas,'#E05C5C');
+    return '<tr>' + totalCatTd('TOTAL DESPESAS') + vals + '</tr>';
+  }
+  function resRows() {
+    if (isQ1) {
+      var r1 = '<tr>' + resCatTd('RESULTADO — JAN', jd.resultado) + pResTd(jd.resultado) + pDashTd() + pDashTd() + pDashTd() + '</tr>';
+      var r2 = '<tr>' + resCatTd('RESULTADO — FEV', fd.resultado) + pDashTd() + pResTd(fd.resultado) + pDashTd() + pDashTd() + '</tr>';
+      var r3 = '<tr>' + resCatTd('RESULTADO — MAR', md.resultado) + pDashTd() + pDashTd() + pResTd(md.resultado) + pDashTd() + '</tr>';
+      var r4 = '<tr>' + resCatTd('RESULTADO Q1', d.resultado) + pDashTd() + pDashTd() + pDashTd() + pResTd(d.resultado) + '</tr>';
+      return r1 + r2 + r3 + r4;
+    }
+    var nm = p === 'jan' ? 'JAN' : p === 'fev' ? 'FEV' : 'MAR';
+    return '<tr>' + resCatTd('RESULTADO — ' + nm, d.resultado) + pResTd(d.resultado) + '</tr>';
+  }
 
-    <!-- DRE TABLE -->
-    <div style="padding:32px 40px">
-      <div style="font-size:11px;font-weight:700;color:#CC0000;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #CC0000">
-        Demonstrativo de Resultado — ${pLabel}
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead>
-          <tr style="background:#0D0D1A">
-            <th style="color:rgba(255,255,255,0.8);padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:0.5px;width:40%">Categoria</th>
-            <th style="color:rgba(255,255,255,0.8);padding:10px 12px;text-align:right;font-size:11px;font-weight:600">Janeiro</th>
-            <th style="color:rgba(255,255,255,0.8);padding:10px 12px;text-align:right;font-size:11px;font-weight:600">Fevereiro</th>
-            <th style="color:rgba(255,255,255,0.8);padding:10px 12px;text-align:right;font-size:11px;font-weight:600">Março</th>
-            <th style="color:rgba(255,255,255,0.8);padding:10px 12px;text-align:right;font-size:11px;font-weight:600">Q1 Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${sectionHdr('RECEITA BRUTA')}
-          ${dreRow('Novos Registros','R$ 346.096','R$ 457.753','R$ 502.862','R$ 1.306.711','#2ECC8F')}
-          ${dreRow('Procurações','—','—','R$ 655.614','R$ 655.614','#2ECC8F')}
-          ${dreRow('Anuidades','—','—','R$ 16.635','R$ 16.635','#2ECC8F')}
-          ${totalRow('TOTAL RECEITA','R$ 346.096','R$ 457.753','R$ 1.175.111','R$ 1.978.960','#2ECC8F')}
-          ${sectionHdr('CUSTO DIRETO DO SERVIÇO')}
-          ${dreRow('GRU / INPI','R$ 37.800','R$ 55.850','R$ 78.400','R$ 172.050','#E05C5C')}
-          ${dreRow('Correspondente Internacional','—','R$ 26.359','R$ 3.744','R$ 30.103','#E05C5C')}
-          ${dreRow('Relatórios de Patente','R$ 1.760','R$ 4.040','R$ 8.100','R$ 13.900','#E05C5C')}
-          ${sectionHdr('DESPESAS OPERACIONAIS')}
-          ${dreRow('Salários','R$ 84.478','R$ 74.091','R$ 81.131','R$ 239.700','#E05C5C')}
-          ${dreRow('Rescisões','—','—','R$ 49.072','R$ 49.072','#E05C5C')}
-          ${dreRow('Impostos (DAS + FGTS + INSS)','R$ 99.123','R$ 82.131','R$ 76.732','R$ 257.986','#E05C5C')}
-          ${dreRow('Aluguel (Curitiba + Cascavel)','R$ 28.816','R$ 30.600','R$ 30.600','R$ 90.016','#E05C5C')}
-          ${dreRow('Serviço da Dívida','R$ 26.283','R$ 26.283','R$ 46.370','R$ 98.936','#E05C5C')}
-          ${dreRow('Marketing e Publicidade','R$ 12.483','R$ 10.546','R$ 8.535','R$ 31.564','#E05C5C')}
-          ${dreRow('Sistemas e Tecnologia','R$ 15.191','R$ 15.191','R$ 15.287','R$ 45.669','#E05C5C')}
-          ${dreRow('Benefícios (VA/VR/VT)','R$ 16.925','R$ 22.311','R$ 17.397','R$ 56.633','#E05C5C')}
-          ${dreRow('Retirada dos Sócios','R$ 110.000','R$ 80.000','R$ 375.000','R$ 565.000','#E05C5C')}
-          ${dreRow('Demais despesas','R$ 69.811','R$ 49.962','R$ 67.839','R$ 187.612','#E05C5C')}
-          ${totalRow('TOTAL DESPESAS','R$ 502.670','R$ 478.164','R$ 858.207','R$ 1.839.041','#E05C5C')}
-          ${resultRow('RESULTADO JANEIRO','-R$ 156.574','—','—','—','#E05C5C')}
-          ${resultRow('RESULTADO FEVEREIRO','—','-R$ 20.411','—','—','#E05C5C')}
-          ${resultRow('RESULTADO MARÇO','—','—','+R$ 316.904','—','#2ECC8F')}
-          ${resultRow('RESULTADO Q1','—','—','—','+R$ 139.919','#2ECC8F')}
-        </tbody>
-      </table>
-    </div>
+  var colTh = isQ1
+    ? '<th style="' + thS + '">Janeiro</th><th style="' + thS + '">Fevereiro</th><th style="' + thS + '">Março</th><th style="' + thS + '">Q1 Total</th>'
+    : '<th style="' + thS + '">' + d.label.split(' ')[0] + ' 2026</th>';
+  var thS = 'color:rgba(255,255,255,0.7);padding:10px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:0.5px;background:#1C1C2C';
 
-    <!-- FOOTER -->
-    <div style="background:#0D0D1A;padding:16px 40px;text-align:center;margin-top:8px">
-      <p style="font-size:9px;color:rgba(255,255,255,0.3);margin:0">
-        Suprema Marcas e Patentes Ltda · CFO Dashboard · Gerado em ${new Date().toLocaleDateString('pt-BR')} · Confidencial
-      </p>
-    </div>
+  // Rebuild colTh with thS defined
+  colTh = isQ1
+    ? '<th style="' + thS + '">Janeiro</th><th style="' + thS + '">Fevereiro</th><th style="' + thS + '">Março</th><th style="' + thS + '">Q1 Total</th>'
+    : '<th style="' + thS + '">' + d.label.split(' ')[0] + ' 2026</th>';
 
-  </div>`;
+  var resVal = (d.resultado > 0 ? '+' : '') + 'R$ ' + Math.abs(d.resultado).toLocaleString('pt-BR');
+
+  return '<div style="width:794px;background:#13131F;font-family:\'Plus Jakarta Sans\',Arial,sans-serif;padding:0;margin:0">'
+
+    // HEADER
+    + '<div style="background:#CC0000;padding:28px 40px;display:flex;align-items:center;justify-content:space-between">'
+    + '<div style="display:flex;align-items:center;gap:14px">'
+    + '<img src="' + logoSrc + '" style="width:44px;height:44px;border-radius:8px" />'
+    + '<div><div style="color:#fff;font-size:18px;font-weight:800;letter-spacing:0.3px">Suprema Patentes</div>'
+    + '<div style="color:rgba(255,255,255,0.75);font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Demonstrativo de Resultado do Exercício</div></div>'
+    + '</div>'
+    + '<div style="text-align:right"><div style="color:#fff;font-size:14px;font-weight:700">' + pShort + '</div>'
+    + '<div style="color:rgba(255,255,255,0.65);font-size:11px;margin-top:2px">' + pSub + '</div></div>'
+    + '</div>'
+
+    // KPIs
+    + '<div style="background:#09090F;padding:20px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">'
+    + pKpi('Receita ' + pShort, 'R$ ' + d.receita.toLocaleString('pt-BR'), '#fff')
+    + pKpi('Despesas ' + pShort, 'R$ ' + d.despesas.toLocaleString('pt-BR'), '#E05C5C')
+    + pKpi('Resultado', resVal, d.resultado >= 0 ? '#2ECC8F' : '#E05C5C')
+    + pKpi('Margem', d.margem.toFixed(1).replace('.',',') + '%', '#FBBF24')
+    + '</div>'
+
+    // TABLE
+    + '<div style="padding:28px 40px">'
+    + '<div style="font-size:10px;font-weight:700;color:#E53535;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #E53535">Demonstrativo de Resultado — ' + (isQ1 ? 'Q1 2026 (Jan · Fev · Mar)' : d.label) + '</div>'
+    + '<table style="width:100%;border-collapse:collapse">'
+    + '<thead><tr><th style="color:rgba(255,255,255,0.7);padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:0.5px;background:#1C1C2C;width:42%">Categoria</th>' + colTh + '</tr></thead>'
+    + '<tbody>'
+    + pSecHdr('RECEITA BRUTA')
+    + rowRec('Novos Registros', 'novos')
+    + rowRec('Procurações', 'proc')
+    + rowRec('Anuidades', 'anu')
+    + totalRec()
+    + pSecHdr('CUSTO DIRETO DO SERVIÇO')
+    + rowDesp('GRU / INPI', 'gru')
+    + rowDesp('Correspondente Internacional', 'internacional')
+    + rowDesp('Relatórios de Patente (Foster PI)', 'relatorios')
+    + pSecHdr('PESSOAL')
+    + rowDesp('Salários', 'salarios')
+    + rowDesp('Rescisões / Verbas Rescisórias', 'rescisoes')
+    + rowDesp('Benefícios (VA + VR + VT)', 'beneficios')
+    + pSecHdr('IMPOSTOS E OBRIGAÇÕES')
+    + rowDesp('DAS (Simples Nacional — Marcas + Serviços)', 'impostos')
+    + pSecHdr('INFRAESTRUTURA E INSTALAÇÕES')
+    + rowDesp('Aluguel (Curitiba + Cascavel)', 'aluguel')
+    + rowDesp('Sistemas e Tecnologia (APOL + Drive + Ponto)', 'sistemas')
+    + pSecHdr('FINANCEIRO')
+    + rowDesp('Serviço da Dívida (3 contratos)', 'divida')
+    + rowDesp('Honorários Advocatícios', 'honorarios')
+    + pSecHdr('VENDAS E MARKETING')
+    + rowDesp('Marketing e Publicidade', 'marketing')
+    + pSecHdr('RETIRADA DOS SÓCIOS')
+    + rowDesp('Retirada dos Sócios', 'socios')
+    + pSecHdr('OUTRAS DESPESAS')
+    + rowDesp('Demais despesas operacionais', 'outros')
+    + totalDesp()
+    + resRows()
+    + '</tbody></table></div>'
+
+    // FOOTER
+    + '<div style="background:#09090F;padding:14px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.06)">'
+    + '<p style="font-size:9px;color:rgba(255,255,255,0.25);margin:0">Suprema Marcas e Patentes Ltda · CFO Dashboard · Gerado em ' + new Date().toLocaleDateString('pt-BR') + ' · Confidencial</p>'
+    + '</div></div>';
 }
 
-function kpiBox(label, val, color) {
-  return '<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">' + label + '</div><div style="font-size:16px;font-weight:800;color:' + color + '">' + val + '</div></div>';
-}
-
-function sectionHdr(title) {
-  return '<tr><td colspan="5" style="background:#F5F5FA;font-size:9px;font-weight:700;color:#CC0000;text-transform:uppercase;letter-spacing:0.8px;padding:6px 12px">' + title + '</td></tr>';
-}
-
-function dreRow(cat, v1, v2, v3, v4, color) {
-  var td = 'padding:8px 12px;text-align:right;color:' + color + ';font-weight:600;border-bottom:1px solid #F0F0F8;font-size:12px';
-  return '<tr><td style="padding:8px 12px;color:#4A5568;border-bottom:1px solid #F0F0F8;font-size:12px;padding-left:20px">' + cat + '</td><td style="' + td + '">' + v1 + '</td><td style="' + td + '">' + v2 + '</td><td style="' + td + '">' + v3 + '</td><td style="' + td + '">' + v4 + '</td></tr>';
-}
-
-function totalRow(cat, v1, v2, v3, v4, color) {
-  var td = 'padding:10px 12px;text-align:right;color:' + color + ';font-weight:800;font-size:13px;background:#0D0D1A';
-  return '<tr><td style="padding:10px 12px;color:#fff;font-weight:800;font-size:13px;background:#0D0D1A">' + cat + '</td><td style="' + td + '">' + v1 + '</td><td style="' + td + '">' + v2 + '</td><td style="' + td + '">' + v3 + '</td><td style="' + td + '">' + v4 + '</td></tr>';
-}
-
-function resultRow(cat, v1, v2, v3, v4, color) {
-  var td = 'padding:11px 12px;text-align:right;color:' + color + ';font-weight:800;font-size:14px;background:#0A1A0A';
-  var bg = 'background:#0A1A0A';
-  if (color === '#E05C5C') { td = td.replace('0A1A0A','1A0A0A'); bg = 'background:#1A0A0A'; }
-  return '<tr><td style="padding:11px 12px;color:#fff;font-weight:800;font-size:14px;' + bg + '">' + cat + '</td><td style="' + td + '">' + v1 + '</td><td style="' + td + '">' + v2 + '</td><td style="' + td + '">' + v3 + '</td><td style="' + td + '">' + v4 + '</td></tr>';
-}
 </script>
 
 </body>
