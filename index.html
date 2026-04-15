@@ -1322,19 +1322,19 @@
     },
     mar: {
       label: 'Março 2026',
-      receita: 1175111, despesas: 858207, resultado: 316904, margem: 27.0, gru: 78400,
+      receita: 1175111, despesas: 1082000, resultado: 93111, margem: 7.9, gru: 78400,
       rec: { novos: 502862, proc: 655614, anu: 16635 },
       desp: { salarios: 81131, rescisoes: 49072, impostos: 76732, gru: 78400, aluguel: 30600,
               divida: 46370, marketing: 8535, sistemas: 15287, beneficios: 17397,
-              socios: 375000, internacional: 3744, relatorios: 8100, honorarios: 2850, outros: 64989 }
+              socios: 375000, internacional: 3744, relatorios: 8100, honorarios: 2850, outros: 288782 }
     },
     q1: {
       label: 'Q1 2026 — Jan · Fev · Mar',
-      receita: 1978960, despesas: 1839041, resultado: 139919, margem: 7.1, gru: 172050,
+      receita: 1978960, despesas: 2062834, resultado: -83874, margem: -4.2, gru: 172050,
       rec: { novos: 1306711, proc: 655614, anu: 16635 },
       desp: { salarios: 239700, rescisoes: 49072, impostos: 257986, gru: 172050, aluguel: 90016,
               divida: 98936, marketing: 31564, sistemas: 45669, beneficios: 56633,
-              socios: 565000, internacional: 30103, relatorios: 13900, honorarios: 8350, outros: 179282 }
+              socios: 565000, internacional: 30103, relatorios: 13900, honorarios: 8350, outros: 403075 }
     }
   };
   var periodoAtual = 'q1';
@@ -1827,8 +1827,8 @@
     var d = PERIODOS[p];
     var months  = isQ1 ? ['Janeiro','Fevereiro','Março'] : [d.label.split(' ')[0]];
     var receita  = isQ1 ? [346096,457753,1175111] : [d.receita];
-    var despesas = isQ1 ? [502670,478164,858207]  : [d.despesas];
-    var resultado = isQ1 ? [-156574,-20411,316904] : [d.resultado];
+    var despesas = isQ1 ? [502670,478164,1082000] : [d.despesas];
+    var resultado = isQ1 ? [-156574,-20411,93111]  : [d.resultado];
 
     var tipOpts = { callbacks:{ label:function(c){ return c.dataset.label+': R$ '+Math.abs(c.raw).toLocaleString('pt-BR'); } } };
     var yTick   = { callback:function(v){ return 'R$ '+(Math.abs(v)/1000).toFixed(0)+'k'; } };
