@@ -703,7 +703,7 @@
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-label" id="kpi-main-lbl">Receita Q1</div>
-        <div class="kpi-value" id="kpi-main-receita">R$ 1,979M</div>
+        <div class="kpi-value" id="kpi-main-receita">R$ 1.978.960</div>
         <div class="kpi-sub" id="kpi-main-sub">Janeiro + Fevereiro + Março</div>
       </div>
       <div class="kpi-card">
@@ -1340,9 +1340,7 @@
     if (kr) {
       kr.className = 'kpi-value';
       var rv = d.receita;
-      kr.textContent = rv >= 1000000
-        ? 'R$ ' + (rv/1000000).toFixed(2).replace('.',',') + 'M'
-        : 'R$ ' + rv.toLocaleString('pt-BR');
+      kr.textContent = 'R$ ' + rv.toLocaleString('pt-BR');
     }
     var ks = document.getElementById('kpi-main-sub');
     if (ks) ks.textContent = isQ1 ? 'Janeiro + Fevereiro + Março' : d.label;
@@ -1583,42 +1581,260 @@
 
     // ── EXPORT DRE PDF ──────────────────────────────────────────────
   function exportDRE() {
-    var area = document.getElementById('dre-export-area');
-    if (!area) { alert('Abra a aba DRE primeiro.'); return; }
-    var btn = area.querySelector('.btn-export');
-    if (btn) btn.style.visibility = 'hidden';
-    html2canvas(area, {
-      scale: 2.5,
-      useCORS: false,
-      allowTaint: true,
-      backgroundColor: '#13131F',
-      logging: false,
-      windowWidth: 1440,
-      windowHeight: 900
-    }).then(function(canvas) {
-      if (btn) btn.style.visibility = '';
-      var imgData = canvas.toDataURL('image/png');
-      var isLandscape = canvas.width > canvas.height;
-      var pdf = new window.jspdf.jsPDF({
-        orientation: isLandscape ? 'landscape' : 'portrait',
-        unit: 'mm', format: 'a4'
-      });
-      var pw = pdf.internal.pageSize.getWidth();
-      var ph = pdf.internal.pageSize.getHeight();
-      var margin = 8;
-      var maxW = pw - margin * 2;
-      var maxH = ph - margin * 2;
-      var ratio = Math.min(maxW / canvas.width, maxH / canvas.height);
-      var fw = canvas.width * ratio;
-      var fh = canvas.height * ratio;
-      var x = (pw - fw) / 2;
-      var y = (ph - fh) / 2;
-      pdf.addImage(imgData, 'PNG', x, y, fw, fh);
-      pdf.save('DRE-Suprema-' + periodoAtual.toUpperCase() + '-2026.pdf');
-    }).catch(function(err) {
-      if (btn) btn.style.visibility = '';
-      alert('Erro ao gerar PDF: ' + err.message);
+    var p   = periodoAtual;
+    var d   = PERIODOS[p];
+    var jd  = PERIODOS.jan, fd = PERIODOS.fev, md = PERIODOS.mar;
+    var isQ1 = p === 'q1';
+
+    var pdf = new window.jspdf.jsPDF({ orientation: isQ1 ? 'landscape' : 'portrait', unit: 'mm', format: 'a4' });
+    var PW = pdf.internal.pageSize.getWidth();
+    var PH = pdf.internal.pageSize.getHeight();
+    var ML = 15, MR = 15, y = 0;
+    var CW = PW - ML - MR;
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function fmt(v) {
+      if (!v || v === 0) return '—';
+      return 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0,maximumFractionDigits:0});
+    }
+    function fmtSign(v) {
+      if (v === 0) return '—';
+      return (v > 0 ? '+ ' : '− ') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0,maximumFractionDigits:0});
+    }
+    function fmtPct(v) { return v.toFixed(1).replace('.',',') + '%'; }
+    function cogs(x) { return x.desp.gru + x.desp.honorarios + x.desp.internacional + x.desp.relatorios; }
+    function opex(x) { return x.desp.salarios+x.desp.rescisoes+x.desp.beneficios+x.desp.socios+x.desp.impostos+x.desp.aluguel+x.desp.marketing+x.desp.sistemas+x.desp.outros; }
+    function gp(x)   { return x.receita - cogs(x); }
+    function ebit(x) { return gp(x) - opex(x); }
+    function nl(x)   { return ebit(x) - x.desp.divida; }
+
+    // ── Column layout ────────────────────────────────────────────
+    var LW, colW, colHdrs;
+    if (isQ1) {
+      LW = CW * 0.38; colW = (CW - LW) / 4;
+      colHdrs = ['Janeiro', 'Fevereiro', 'Março', 'Q1 Total'];
+    } else {
+      LW = CW * 0.62; colW = CW - LW;
+      colHdrs = [d.label.split(' ')[0] + ' 2026'];
+    }
+    function cx(i) { return ML + LW + colW * i + colW / 2; }
+
+    // ── LOGO ─────────────────────────────────────────────────────
+    var logoEl = document.querySelector('.logo-icon img');
+    var logoSrc = logoEl ? logoEl.src : null;
+
+    // ── HEADER ───────────────────────────────────────────────────
+    y = 14;
+    if (logoSrc) {
+      try { pdf.addImage(logoSrc, 'PNG', ML, 6, 28, 28); } catch(e) {}
+    }
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(16);
+    pdf.setTextColor(20, 20, 20);
+    pdf.text('SUPREMA PROPRIEDADE INTELECTUAL', ML + (logoSrc ? 32 : 0), 14);
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.setTextColor(80, 80, 80);
+    pdf.text('Demonstrativo de Resultado do Exercício — ' + d.label, ML + (logoSrc ? 32 : 0), 20);
+
+    var today = new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'});
+    pdf.setFontSize(8.5);
+    pdf.setTextColor(140, 140, 140);
+    pdf.text('Emitido em ' + today, PW - MR, 20, {align:'right'});
+
+    // Divider line
+    y = logoSrc ? 38 : 28;
+    pdf.setDrawColor(220, 220, 220);
+    pdf.setLineWidth(0.5);
+    pdf.line(ML, y, PW - MR, y);
+    y += 6;
+
+    // ── TABLE HEADER ─────────────────────────────────────────────
+    var ROW = 6.2, ROWBIG = 7;
+    pdf.setFillColor(245, 245, 245);
+    pdf.rect(ML, y - 4, CW, ROWBIG, 'F');
+    pdf.setDrawColor(200, 200, 200);
+    pdf.line(ML, y - 4, PW - MR, y - 4);
+    pdf.line(ML, y + ROWBIG - 4, PW - MR, y + ROWBIG - 4);
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(8);
+    pdf.setTextColor(60, 60, 60);
+    pdf.text('DESCRIÇÃO', ML + 2, y);
+    colHdrs.forEach(function(h, i) {
+      pdf.text(h.toUpperCase(), cx(i), y, {align:'center'});
     });
+    y += ROWBIG;
+
+    // ── Row drawing ──────────────────────────────────────────────
+    var rowIdx = 0;
+    function newPageIfNeeded() {
+      if (y > PH - 18) {
+        pdf.addPage();
+        y = 14; rowIdx = 0;
+      }
+    }
+    function drawSectionHdr(title) {
+      newPageIfNeeded();
+      y += 2;
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(30, 30, 30);
+      pdf.text(title, ML, y);
+      y += ROW; rowIdx = 0;
+    }
+    function drawSubHdr(title) {
+      newPageIfNeeded();
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('  ' + title, ML, y);
+      y += 5;
+    }
+    function drawLine(label, vals, opts) {
+      opts = opts || {};
+      newPageIfNeeded();
+      if (rowIdx % 2 === 0) {
+        pdf.setFillColor(252, 252, 252);
+        pdf.rect(ML, y - 4, CW, ROW, 'F');
+      }
+      // bottom border light
+      pdf.setDrawColor(240, 240, 240);
+      pdf.line(ML, y + ROW - 4, PW - MR, y + ROW - 4);
+
+      var bold   = opts.bold   || false;
+      var indent = opts.indent || 0;
+      var size   = opts.size   || (bold ? 8.5 : 8);
+
+      pdf.setFont('helvetica', bold ? 'bold' : (opts.italic ? 'italic' : 'normal'));
+      pdf.setFontSize(size);
+      pdf.setTextColor(bold ? 20 : (opts.dim ? 120 : 50), bold ? 20 : (opts.dim ? 120 : 50), bold ? 20 : (opts.dim ? 120 : 50));
+      pdf.text(label, ML + indent, y);
+
+      vals.forEach(function(v, i) {
+        if (v === null || v === undefined) {
+          pdf.setTextColor(200, 200, 200);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(8);
+          pdf.text('—', cx(i), y, {align:'center'});
+          return;
+        }
+        var txt, color;
+        if (opts.sign) {
+          txt   = fmtSign(v);
+          color = v >= 0 ? [22,163,74] : [220,38,38];
+        } else if (opts.pct) {
+          txt   = fmtPct(v);
+          color = v >= 0 ? [22,163,74] : [220,38,38];
+          pdf.setFont('helvetica', 'italic');
+        } else if (opts.green) {
+          txt   = fmt(v);
+          color = [22,163,74];
+        } else if (opts.red) {
+          txt   = fmt(v);
+          color = [180,40,40];
+        } else {
+          txt   = fmt(v);
+          color = bold ? [20,20,20] : [60,60,60];
+        }
+        pdf.setFont('helvetica', (bold && !opts.pct) ? 'bold' : (opts.italic||opts.pct ? 'italic' : 'normal'));
+        pdf.setFontSize(size);
+        pdf.setTextColor(color[0], color[1], color[2]);
+        pdf.text(txt, cx(i), y, {align:'center'});
+      });
+      y += ROW; rowIdx++;
+    }
+    function drawTotalLine(label, vals, opts) {
+      newPageIfNeeded();
+      pdf.setFillColor(235, 235, 235);
+      pdf.rect(ML, y - 4, CW, ROW + 1, 'F');
+      pdf.setDrawColor(180, 180, 180);
+      pdf.line(ML, y - 4, PW - MR, y - 4);
+      pdf.line(ML, y + ROW - 3, PW - MR, y + ROW - 3);
+      opts = Object.assign({}, opts, {bold:true, size:8.5});
+      drawLine(label, vals, opts);
+    }
+    function drawResultLine(label, vals, positive) {
+      newPageIfNeeded();
+      var bg = positive ? [240,255,245] : [255,242,242];
+      pdf.setFillColor(bg[0], bg[1], bg[2]);
+      pdf.rect(ML, y - 4, CW, ROWBIG, 'F');
+      pdf.setDrawColor(positive ? 180 : 220, positive ? 220 : 180, positive ? 180 : 180);
+      pdf.line(ML, y - 4, PW - MR, y - 4);
+      pdf.line(ML, y + ROWBIG - 4, PW - MR, y + ROWBIG - 4);
+      drawLine(label, vals, {bold:true, sign:true, size:9});
+      y += 1;
+    }
+    function drawPctLine(label, vals) {
+      drawLine(label, vals, {pct:true, italic:true, dim:true, indent:4});
+    }
+
+    function vD(key)  { return isQ1 ? [jd.desp[key],fd.desp[key],md.desp[key],d.desp[key]] : [d.desp[key]]; }
+    function vR(key)  { return isQ1 ? [jd.rec[key], fd.rec[key], md.rec[key], d.rec[key]]  : [d.rec[key]]; }
+    function vC(fn)   { return isQ1 ? [fn(jd),fn(fd),fn(md),fn(d)] : [fn(d)]; }
+
+    // ── RECEITA BRUTA ─────────────────────────────────────────────
+    drawSectionHdr('Receita Bruta');
+    drawLine('    Novos Depósitos (Marcas, Patentes, DI)',  vR('novos'), {green:true});
+    drawLine('    Procurações / Substabelecimentos',         vR('proc'),  {green:true});
+    drawLine('    Anuidades e Renovações',                   vR('anu'),   {green:true});
+    drawTotalLine('Total Receita Bruta',
+      isQ1?[jd.receita,fd.receita,md.receita,d.receita]:[d.receita], {green:true});
+
+    // ── COGS ──────────────────────────────────────────────────────
+    drawSectionHdr('(–) Custo do Serviço — COGS');
+    drawLine('    GRU / Taxas INPI (gov.)',                          vD('gru'),           {red:true});
+    drawLine('    Honorários de Terceiros / Correspondentes',         vD('honorarios'),    {red:true});
+    drawLine('    Serviços Internacionais (WIPO, USPTO, EUIPO)',       vD('internacional'), {red:true});
+    drawLine('    Relatórios Técnicos e Pareceres',                    vD('relatorios'),    {red:true});
+    drawTotalLine('Total COGS', vC(cogs), {red:true});
+    drawResultLine('Lucro Bruto', vC(gp), isQ1 ? d.receita > cogs(d) : d.receita > cogs(d));
+    drawPctLine('Margem Bruta', vC(function(x){ return x.receita ? gp(x)/x.receita*100:0; }));
+
+    // ── OPEX ──────────────────────────────────────────────────────
+    drawSectionHdr('(–) Despesas Operacionais');
+    drawSubHdr('Pessoal e Encargos');
+    drawLine('        Salários, INSS e FGTS',               vD('salarios'),  {});
+    drawLine('        Rescisões / Verbas Trabalhistas',       vD('rescisoes'), {});
+    drawLine('        Benefícios (VT, VR, Plano de Saúde)',   vD('beneficios'),{});
+    drawLine('        Pró-labore Sócios',                     vD('socios'),    {});
+    drawSubHdr('Tributos');
+    drawLine('        Simples Nacional / Impostos s/ Receita',vD('impostos'),  {});
+    drawSubHdr('Estrutura');
+    drawLine('        Aluguel e Taxas de Ocupação',            vD('aluguel'),   {});
+    drawLine('        Sistemas, TI e Software',                vD('sistemas'),  {});
+    drawSubHdr('Comercial');
+    drawLine('        Marketing, Mídia e Publicidade',          vD('marketing'), {});
+    drawSubHdr('Administrativo');
+    drawLine('        Outras Despesas Operacionais',            vD('outros'),    {});
+    drawTotalLine('Total Despesas Operacionais', vC(opex), {red:true});
+    drawResultLine('Resultado Operacional (EBIT)', vC(ebit), ebit(d) >= 0);
+    drawPctLine('Margem EBIT', vC(function(x){ return x.receita ? ebit(x)/x.receita*100:0; }));
+
+    // ── RESULTADO FINANCEIRO ──────────────────────────────────────
+    drawSectionHdr('(–) Resultado Financeiro');
+    drawLine('    Juros e Amortização — Serviço da Dívida', vD('divida'), {red:true});
+
+    // ── RESULTADO LÍQUIDO ─────────────────────────────────────────
+    y += 2;
+    drawResultLine('Resultado Líquido do Período', vC(nl), nl(d) >= 0);
+    drawPctLine('Margem Líquida', vC(function(x){ return x.receita ? nl(x)/x.receita*100:0; }));
+
+    // ── FOOTER ────────────────────────────────────────────────────
+    var pages = pdf.getNumberOfPages();
+    for (var pg = 1; pg <= pages; pg++) {
+      pdf.setPage(pg);
+      pdf.setDrawColor(200,200,200);
+      pdf.line(ML, PH-10, PW-MR, PH-10);
+      pdf.setFont('helvetica','normal');
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(150,150,150);
+      pdf.text('Suprema Propriedade Intelectual — Uso Interno — Documento gerado automaticamente.', ML, PH-6);
+      pdf.text('Página ' + pg + ' de ' + pages, PW-MR, PH-6, {align:'right'});
+    }
+
+    pdf.save('DRE-Suprema-' + p.toUpperCase() + '-2026.pdf');
   }
 
   // ── CHARTS ────────────────────────────────────────────────────────
