@@ -702,9 +702,14 @@
 
     <div class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-label" id="kpi-main-lbl">Receita Q1 Total</div>
+        <div class="kpi-label" id="kpi-main-lbl">Receita Q1</div>
         <div class="kpi-value" id="kpi-main-receita">R$ 1,979M</div>
         <div class="kpi-sub" id="kpi-main-sub">Janeiro + Fevereiro + Março</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label" id="kpi-saida-lbl">Saída Q1</div>
+        <div class="kpi-value negative" id="kpi-main-saida">R$ 1.839.041</div>
+        <div class="kpi-sub" id="kpi-saida-sub"><span class="kpi-badge badge-down">GRU: R$ 172.050</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label" id="kpi-res-lbl">Resultado Q1</div>
@@ -712,14 +717,9 @@
         <div class="kpi-sub"><span class="kpi-badge badge-up" id="kpi-main-margem">7,1% de margem</span></div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Dívida Total Hoje</div>
-        <div class="kpi-value negative">R$ 977.198</div>
-        <div class="kpi-sub"><span class="kpi-badge badge-down">R$ 40.987/mês</span></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Volume GRU/INPI</div>
-        <div class="kpi-value">+107%</div>
-        <div class="kpi-sub"><span class="kpi-badge badge-up">Jan→Mar crescimento</span></div>
+        <div class="kpi-label" id="kpi-vol-lbl">Volume GRU/INPI</div>
+        <div class="kpi-value" id="kpi-main-gru">R$ 172.050</div>
+        <div class="kpi-sub" id="kpi-vol-sub"><span class="kpi-badge badge-up">+107% Jan→Mar</span></div>
       </div>
     </div>
 
@@ -1323,35 +1323,55 @@
     if (dt) dt.textContent = 'Demonstrativo de Resultado — ' + d.label;
 
     // KPI cards — Visão Geral
-    var rlbl = document.getElementById('kpi-res-lbl');
-    if (rlbl) rlbl.textContent = 'Resultado ' + (isQ1 ? 'Q1' : d.label.split(' ')[0]);
+    var per = isQ1 ? 'Q1' : d.label.split(' ')[0];
 
+    // Labels
     var lbl = document.getElementById('kpi-main-lbl');
-    if (lbl) lbl.textContent = 'Receita ' + (isQ1 ? 'Q1' : d.label.split(' ')[0]);
+    if (lbl) lbl.textContent = 'Receita ' + per;
+    var rlbl = document.getElementById('kpi-res-lbl');
+    if (rlbl) rlbl.textContent = 'Resultado ' + per;
+    var slbl = document.getElementById('kpi-saida-lbl');
+    if (slbl) slbl.textContent = 'Saída ' + per;
+    var vlbl = document.getElementById('kpi-vol-lbl');
+    if (vlbl) vlbl.textContent = 'Volume GRU/INPI ' + per;
 
+    // Receita
     var kr = document.getElementById('kpi-main-receita');
     if (kr) {
-      var rv = d.receita;
       kr.className = 'kpi-value';
+      var rv = d.receita;
       kr.textContent = rv >= 1000000
         ? 'R$ ' + (rv/1000000).toFixed(2).replace('.',',') + 'M'
         : 'R$ ' + rv.toLocaleString('pt-BR');
     }
-
     var ks = document.getElementById('kpi-main-sub');
     if (ks) ks.textContent = isQ1 ? 'Janeiro + Fevereiro + Março' : d.label;
 
+    // Saída
+    var ksa = document.getElementById('kpi-main-saida');
+    if (ksa) ksa.textContent = 'R$ ' + d.despesas.toLocaleString('pt-BR');
+    var kss = document.getElementById('kpi-saida-sub');
+    if (kss) kss.innerHTML = '<span class="kpi-badge badge-down">GRU: ' + fmtBRL(d.desp.gru) + '</span>';
+
+    // Resultado
     var kres = document.getElementById('kpi-main-resultado');
     if (kres) {
       kres.className = 'kpi-value ' + (d.resultado >= 0 ? 'positive' : 'negative');
-      var sign = d.resultado >= 0 ? '+' : '-';
-      kres.textContent = sign + 'R$ ' + Math.abs(d.resultado).toLocaleString('pt-BR');
+      kres.textContent = (d.resultado >= 0 ? '+' : '-') + 'R$ ' + Math.abs(d.resultado).toLocaleString('pt-BR');
     }
-
     var km = document.getElementById('kpi-main-margem');
     if (km) {
       km.className = 'kpi-badge ' + (d.resultado >= 0 ? 'badge-up' : 'badge-down');
       km.textContent = d.margem.toFixed(1).replace('.',',') + '% de margem';
+    }
+
+    // Volume GRU
+    var kgru = document.getElementById('kpi-main-gru');
+    if (kgru) kgru.textContent = fmtBRL(d.desp.gru);
+    var kvs = document.getElementById('kpi-vol-sub');
+    if (kvs) {
+      var gruLabel = isQ1 ? '+107% Jan→Mar' : (p==='jan' ? 'base do trimestre' : p==='fev' ? '+48% vs Jan' : '+107% vs Jan');
+      kvs.innerHTML = '<span class="kpi-badge badge-up">' + gruLabel + '</span>';
     }
 
     var ct = document.getElementById('chart-visao-title');
