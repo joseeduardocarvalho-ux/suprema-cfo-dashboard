@@ -1700,9 +1700,15 @@
     var colgroup = '<col style="width:' + descW + '">';
     for (var ci = 0; ci < ncols; ci++) colgroup += '<col style="width:' + colW + '">';
 
+    // Loading overlay — cobre a tela enquanto html2canvas renderiza
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(14,14,17,0.85);z-index:99998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;';
+    overlay.innerHTML = '<div style="color:#f0f0f5;font-family:Plus Jakarta Sans,sans-serif;font-size:15px;font-weight:600;letter-spacing:0.3px;">Gerando PDF DRE...</div><div style="color:#9999aa;font-family:Plus Jakarta Sans,sans-serif;font-size:12px;">Aguarde um momento</div>';
+    document.body.appendChild(overlay);
+
     var wrap = document.createElement('div');
     wrap.id = 'dre-render-wrap';
-    wrap.style.cssText = 'position:absolute;left:0;top:0;z-index:-9999;background:white;width:' + pageW + ';padding:12mm 15mm 10mm 15mm;font-family:Arial,sans-serif;color:#000;box-sizing:border-box;';
+    wrap.style.cssText = 'position:fixed;top:0;left:0;z-index:99997;background:white;width:' + pageW + ';padding:12mm 15mm 10mm 15mm;font-family:Arial,sans-serif;color:#000;box-sizing:border-box;';
     wrap.innerHTML =
       '<div style="display:flex;align-items:center;gap:14px;margin-bottom:6mm;">'
       + '<img src="' + LOGO_DRE + '" style="height:50px;">'
@@ -1731,6 +1737,7 @@
       logging: false
     }).then(function(canvas) {
       if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
 
       var pdf = new window.jspdf.jsPDF({ orientation: isQ1 ? 'landscape' : 'portrait', unit: 'mm', format: 'a4' });
       var pw  = pdf.internal.pageSize.getWidth();
