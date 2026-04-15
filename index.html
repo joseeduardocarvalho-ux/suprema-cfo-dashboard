@@ -703,7 +703,7 @@
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-label" id="kpi-main-lbl">Receita Q1 Total</div>
-        <div class="kpi-value gold" id="kpi-main-receita">R$ 1,979M</div>
+        <div class="kpi-value" id="kpi-main-receita">R$ 1,979M</div>
         <div class="kpi-sub" id="kpi-main-sub">Janeiro + Fevereiro + Março</div>
       </div>
       <div class="kpi-card">
@@ -718,7 +718,7 @@
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Volume GRU/INPI</div>
-        <div class="kpi-value gold">+107%</div>
+        <div class="kpi-value">+107%</div>
         <div class="kpi-sub"><span class="kpi-badge badge-up">Jan→Mar crescimento</span></div>
       </div>
     </div>
@@ -1332,6 +1332,7 @@
     var kr = document.getElementById('kpi-main-receita');
     if (kr) {
       var rv = d.receita;
+      kr.className = 'kpi-value';
       kr.textContent = rv >= 1000000
         ? 'R$ ' + (rv/1000000).toFixed(2).replace('.',',') + 'M'
         : 'R$ ' + rv.toLocaleString('pt-BR');
@@ -1560,327 +1561,290 @@
     container.innerHTML = h;
   }
 
-    // ── EXPORT DRE PDF ──
+    // ── EXPORT DRE PDF ──────────────────────────────────────────────
   function exportDRE() {
-    var area = document.getElementById('dre-export-area');
-    if (!area) return;
-    var d = PERIODOS[periodoAtual];
-    html2canvas(area, {
-      scale: 2,
-      backgroundColor: '#13131F',
-      useCORS: false,
-      allowTaint: true,
-      logging: false,
-      windowWidth: 1440
-    }).then(function(canvas) {
-      var imgData = canvas.toDataURL('image/png');
-      var pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      var pw = pdf.internal.pageSize.getWidth();
-      var ph = pdf.internal.pageSize.getHeight();
-      var ratio = Math.min((pw - 20) / canvas.width, (ph - 20) / canvas.height);
-      var fw = canvas.width * ratio;
-      var fh = canvas.height * ratio;
-      pdf.addImage(imgData, 'PNG', (pw - fw) / 2, (ph - fh) / 2, fw, fh);
-      pdf.save('DRE-Suprema-' + periodoAtual.toUpperCase() + '-2026.pdf');
-    });
-  }
-
-  // ── CHART DEFAULTS ──
-  Chart.defaults.color = 'rgba(255,255,255,0.55)';
-  Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
-  Chart.defaults.font.family = 'Plus Jakarta Sans';
-
-  var chartsBuilt = false;
-  var chartInstances = {};
-
-  function destroyChart(id) {
-    if (chartInstances[id]) { try { chartInstances[id].destroy(); } catch(e){} delete chartInstances[id]; }
-  }
-
-  function buildCharts() {
-    if (chartsBuilt) return;
-    chartsBuilt = true;
-
-    var p = periodoAtual;
+    var p  = periodoAtual;
+    var d  = PERIODOS[p];
+    var jd = PERIODOS.jan, fd = PERIODOS.fev, md = PERIODOS.mar;
     var isQ1 = p === 'q1';
-    var d = PERIODOS[p];
-    var months = isQ1 ? ['Janeiro', 'Fevereiro', 'Março'] : [d.label.split(' ')[0]];
-    var receita  = isQ1 ? [346096, 457753, 1175111] : [d.receita];
-    var despesas = isQ1 ? [502670, 478164, 858207]  : [d.despesas];
-    var resultado = isQ1 ? [-156574, -20411, 316904] : [d.resultado];
+    var pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-    var commonOpts = {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + Math.abs(c.raw).toLocaleString('pt-BR'); } } } },
-      scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (Math.abs(v)/1000).toFixed(0) + 'k'; } } } }
-    };
+    var PW = pdf.internal.pageSize.getWidth();   // 297
+    var PH = pdf.internal.pageSize.getHeight();  // 210
+    var ML = 14, MR = 14;
+    var CW = PW - ML - MR;                       // usable width
 
-    // ── VISÃO GERAL — bar ──
-    destroyChart('chartVisao');
-    var cv = document.getElementById('chartVisao');
-    if (cv) {
-      chartInstances['chartVisao'] = new Chart(cv, {
-        type: 'bar',
-        data: {
-          labels: months,
-          datasets: [
-            { label: 'Receita',    data: receita,   backgroundColor: 'rgba(46,204,143,0.75)', borderColor: '#2ECC8F', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Despesas',   data: despesas,  backgroundColor: 'rgba(229,53,53,0.55)',  borderColor: '#E53535', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Resultado',  data: resultado, backgroundColor: resultado.map(function(v){ return v >= 0 ? 'rgba(46,204,143,0.95)' : 'rgba(224,92,92,0.9)'; }), borderColor: resultado.map(function(v){ return v >= 0 ? '#2ECC8F' : '#E05C5C'; }), borderWidth: 1.5, borderRadius: 6 }
-          ]
-        },
-        options: Object.assign({}, commonOpts, { plugins: Object.assign({}, commonOpts.plugins, { legend: { position: 'top' } }) }
-        )
-      });
+    // ── helpers ─────────────────────────────────────────────────
+    function R(v) {
+      if (!v || v === 0) return '—';
+      return 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0,maximumFractionDigits:0});
+    }
+    function Rsign(v) {
+      if (!v || v === 0) return '—';
+      return (v > 0 ? '+ ' : '− ') + 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0,maximumFractionDigits:0});
+    }
+    function Pct(v) { return v.toFixed(1).replace('.',',') + '%'; }
+
+    // ── computed ────────────────────────────────────────────────
+    function cogs(x) { return x.desp.gru + x.desp.honorarios + x.desp.internacional + x.desp.relatorios; }
+    function opex(x) { return x.desp.salarios+x.desp.rescisoes+x.desp.beneficios+x.desp.socios+x.desp.impostos+x.desp.aluguel+x.desp.marketing+x.desp.sistemas+x.desp.outros; }
+    function gp(x)   { return x.receita - cogs(x); }
+    function ebit(x) { return gp(x) - opex(x); }
+    function nl(x)   { return ebit(x) - x.desp.divida; }
+
+    // ── colour helpers ──────────────────────────────────────────
+    var C = { black:'#0d0d0d', dark:'#1a1a2e', mid:'#2d2d44', white:'#ffffff',
+              red:[220,38,38], green:[22,163,74], gold:[202,138,4],
+              bg:[13,13,30], hdr:[30,30,60], alt:[22,22,42] };
+
+    function rgb(arr) { return { r:arr[0], g:arr[1], b:arr[2] }; }
+
+    // ── column layout ───────────────────────────────────────────
+    var labelW, colW, cols;
+    if (isQ1) {
+      labelW = CW * 0.36;
+      colW   = (CW - labelW) / 4;
+      cols   = ['Janeiro','Fevereiro','Março','Q1 Total'];
+    } else {
+      labelW = CW * 0.60;
+      colW   = CW - labelW;
+      cols   = [d.label.split(' ')[0] + ' 2026'];
     }
 
-    // ── RECEITA × DESPESAS × RESULTADO ──
-    destroyChart('chartRecDesp');
-    var crd = document.getElementById('chartRecDesp');
-    if (crd) {
-      chartInstances['chartRecDesp'] = new Chart(crd, {
-        type: 'bar',
-        data: {
-          labels: months,
-          datasets: [
-            { label: 'Receita', data: receita, backgroundColor: 'rgba(46,204,143,0.75)', borderColor: '#2ECC8F', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Despesas Totais', data: despesas, backgroundColor: 'rgba(229,53,53,0.55)', borderColor: '#E53535', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Resultado', data: resultado, backgroundColor: resultado.map(function(v){ return v >= 0 ? 'rgba(46,204,143,0.95)' : 'rgba(224,92,92,0.9)'; }), borderColor: resultado.map(function(v){ return v >= 0 ? '#2ECC8F' : '#E05C5C'; }), borderWidth: 1.5, borderRadius: 6 }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + Math.abs(c.raw).toLocaleString('pt-BR'); } } } },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } } } }
-        }
-      });
-    }
+    function colX(i) { return ML + labelW + i * colW; }
+    function colCenter(i) { return colX(i) + colW/2; }
 
-    // ── TIPO DE RECEITA ──
-    destroyChart('chartTipoRec');
-    var ctr = document.getElementById('chartTipoRec');
-    if (ctr) {
-      chartInstances['chartTipoRec'] = new Chart(ctr, {
-        type: 'bar',
-        data: {
-          labels: months,
-          datasets: [
-            { label: 'Novos Registros', data: [346096, 457753, 502862], backgroundColor: 'rgba(74,144,217,0.7)', borderColor: '#4A90D9', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Procurações', data: [0, 0, 655614], backgroundColor: 'rgba(201,162,39,0.7)', borderColor: '#E53535', borderWidth: 1.5, borderRadius: 6 },
-            { label: 'Anuidades', data: [0, 0, 16635], backgroundColor: 'rgba(46,204,143,0.6)', borderColor: '#2ECC8F', borderWidth: 1.5, borderRadius: 6 }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + c.raw.toLocaleString('pt-BR'); } } } },
-          scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } } } }
-        }
-      });
-    }
+    // ── BACKGROUND ──────────────────────────────────────────────
+    pdf.setFillColor(13,13,30);
+    pdf.rect(0, 0, PW, PH, 'F');
 
-    // ── DESPESAS MARÇO — DONUT ──
-    destroyChart('chartDesp');
-    var cd = document.getElementById('chartDesp');
-    if (cd) {
-      chartInstances['chartDesp'] = new Chart(cd, {
-        type: 'doughnut',
-        data: {
-          labels: ['Salários', 'Impostos', 'GRU/INPI', 'Retirada Sócios', 'Dívida', 'Aluguel', 'Rescisões', 'Benefícios', 'Marketing', 'Sistemas', 'Outros'],
-          datasets: [{
-            data: [81131, 76732, 78400, 375000, 46370, 30600, 49072, 17397, 8535, 15287, 79689],
-            backgroundColor: ['#4A90D9','#E53535','#2ECC8F','#E05C5C','#8B5CF6','#F59E0B','#EF4444','#06B6D4','#84CC16','#F97316','rgba(255,255,255,0.2)'],
-            borderWidth: 2,
-            borderColor: 'rgba(7,7,16,0.85)'
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12, padding: 10 } },
-            tooltip: { callbacks: { label: function(c){ return c.label + ': R$ ' + c.raw.toLocaleString('pt-BR') + ' (' + ((c.raw/858207)*100).toFixed(1) + '%)';; } } }
-          }
-        }
-      });
-    }
+    // ── HEADER BLOCK ────────────────────────────────────────────
+    pdf.setFillColor(30,30,60);
+    pdf.rect(0, 0, PW, 22, 'F');
 
-    // ── GRU TREND — LINE ──
-    destroyChart('chartGru');
-    var cg = document.getElementById('chartGru');
-    if (cg) {
-      chartInstances['chartGru'] = new Chart(cg, {
-        type: 'line',
-        data: {
-          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril'],
-          datasets: [{
-            label: 'GRU/INPI pago',
-            data: [37800, 55850, 78400, 69900],
-            borderColor: '#E53535',
-            backgroundColor: 'rgba(229,53,53,0.15)',
-            borderWidth: 3,
-            pointBackgroundColor: '#E53535',
-            pointRadius: 6,
-            pointHoverRadius: 8,
-            fill: true,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: function(c){ return 'GRU: R$ ' + c.raw.toLocaleString('pt-BR'); } } }
-          },
-          scales: {
-            y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } }, min: 0 }
-          }
-        }
-      });
-    }
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(14);
+    pdf.setTextColor(255,255,255);
+    pdf.text('SUPREMA PATENTES', ML, 10);
 
-    // ── EVOLUÇÃO DO FATURAMENTO — Line ──
-    destroyChart('chartFaturamento');
-    var cf = document.getElementById('chartFaturamento');
-    if (cf) {
-      chartInstances['chartFaturamento'] = new Chart(cf, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Novos Registros',
-              data: [346096, 457753, 502862],
-              borderColor: '#E53535',
-              backgroundColor: 'rgba(229,53,53,0.12)',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#E53535',
-              pointRadius: 5,
-              fill: true,
-              tension: 0.35
-            },
-            {
-              label: 'Procurações',
-              data: [0, 0, 655614],
-              borderColor: '#4A90D9',
-              backgroundColor: 'rgba(74,144,217,0.10)',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#4A90D9',
-              pointRadius: 5,
-              fill: true,
-              tension: 0.35
-            },
-            {
-              label: 'Anuidades',
-              data: [0, 0, 16635],
-              borderColor: '#FBBF24',
-              backgroundColor: 'rgba(251,191,36,0.10)',
-              borderWidth: 2,
-              pointBackgroundColor: '#FBBF24',
-              pointRadius: 5,
-              fill: false,
-              tension: 0.35
-            },
-            {
-              label: 'Total',
-              data: [346096, 457753, 1175111],
-              borderColor: '#2ECC8F',
-              backgroundColor: 'rgba(46,204,143,0.06)',
-              borderWidth: 3,
-              pointBackgroundColor: '#2ECC8F',
-              pointRadius: 6,
-              fill: true,
-              tension: 0.35,
-              borderDash: [6,3]
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 14, padding: 14 } },
-            tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + c.raw.toLocaleString('pt-BR'); } } }
-          },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } }, min: 0 } }
-        }
-      });
-    }
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(9);
+    pdf.setTextColor(180,180,220);
+    pdf.text('Demonstrativo de Resultado do Exercício', ML, 16);
 
-    // ── EVOLUÇÃO DAS DESPESAS — Line ──
-    destroyChart('chartDespEvol');
-    var cde = document.getElementById('chartDespEvol');
-    if (cde) {
-      chartInstances['chartDespEvol'] = new Chart(cde, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Salários',
-              data: [84478, 74091, 81131],
-              borderColor: '#4A90D9',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#4A90D9',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Impostos',
-              data: [99123, 82131, 76732],
-              borderColor: '#E53535',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#E53535',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'GRU/INPI',
-              data: [37800, 55850, 78400],
-              borderColor: '#FBBF24',
-              backgroundColor: 'transparent',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#FBBF24',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Aluguel',
-              data: [28816, 30600, 30600],
-              borderColor: '#8B5CF6',
-              backgroundColor: 'transparent',
-              borderWidth: 2,
-              pointBackgroundColor: '#8B5CF6',
-              pointRadius: 5,
-              tension: 0.35
-            },
-            {
-              label: 'Serviço Dívida',
-              data: [26283, 26283, 46370],
-              borderColor: '#F97316',
-              backgroundColor: 'transparent',
-              borderWidth: 2,
-              pointBackgroundColor: '#F97316',
-              pointRadius: 5,
-              tension: 0.35
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 14, padding: 14 } },
-            tooltip: { callbacks: { label: function(c){ return c.dataset.label + ': R$ ' + c.raw.toLocaleString('pt-BR'); } } }
-          },
-          scales: { y: { ticks: { callback: function(v){ return 'R$ ' + (v/1000).toFixed(0) + 'k'; } }, min: 0 } }
-        }
-      });
-    }
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(10);
+    pdf.setTextColor(255,255,255);
+    pdf.text(d.label.toUpperCase(), PW/2, 10, {align:'center'});
 
-    // ── EVOLUÇÃO DO FATURAMENTO — Line ──
-    
+    var today = new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(8);
+    pdf.setTextColor(160,160,200);
+    pdf.text('Gerado em ' + today, PW - MR, 16, {align:'right'});
 
-    // ── EVOLUÇÃO DAS DESPESAS — Line ──
+    // ── TABLE HEADER ─────────────────────────────────────────────
+    var TY = 26;
+    var ROW = 6.5;
+
+    pdf.setFillColor(45,45,90);
+    pdf.rect(ML, TY - 4, CW, ROW + 1, 'F');
+
+    pdf.setFont('helvetica','bold');
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(200,200,255);
+    pdf.text('DESCRIÇÃO', ML + 2, TY);
+    cols.forEach(function(c, i) {
+      pdf.text(c.toUpperCase(), colCenter(i), TY, {align:'center'});
+    });
+
+    var y = TY + ROW;
+
+    // ── ROW FUNCTIONS ─────────────────────────────────────────────
+    var rowCount = 0;
+    function drawRow(label, values, opts) {
+      opts = opts || {};
+      var indent = opts.indent || 0;
+      var bold   = opts.bold   || false;
+      var color  = opts.color  || null;  // 'green','red','gold'
+      var size   = opts.size   || 7;
+      var secHdr = opts.secHdr || false;
+      var subHdr = opts.subHdr || false;
+      var pctRow = opts.pctRow || false;
+
+      // new page check
+      if (y > PH - 14) {
+        pdf.addPage();
+        pdf.setFillColor(13,13,30);
+        pdf.rect(0, 0, PW, PH, 'F');
+        y = 16;
+        rowCount = 0;
       }
+
+      if (secHdr) {
+        pdf.setFillColor(40,40,80);
+        pdf.rect(ML, y - 4, CW, ROW, 'F');
+        pdf.setFont('helvetica','bold');
+        pdf.setFontSize(6.5);
+        pdf.setTextColor(150,150,220);
+        pdf.text(label.toUpperCase(), ML + 2, y);
+        y += ROW;
+        rowCount = 0;
+        return;
+      }
+
+      if (subHdr) {
+        pdf.setFont('helvetica','bold');
+        pdf.setFontSize(6);
+        pdf.setTextColor(120,120,180);
+        pdf.text('  ' + label, ML + 2, y);
+        y += 5;
+        return;
+      }
+
+      // alternating row bg
+      if (!bold) {
+        if (rowCount % 2 === 0) {
+          pdf.setFillColor(20,20,38);
+          pdf.rect(ML, y - 4, CW, ROW, 'F');
+        }
+      } else {
+        pdf.setFillColor(35,35,65);
+        pdf.rect(ML, y - 4, CW, ROW + 0.5, 'F');
+      }
+
+      // label
+      pdf.setFont('helvetica', bold ? 'bold' : (pctRow ? 'italic' : 'normal'));
+      pdf.setFontSize(size);
+      if (pctRow)       pdf.setTextColor(120,180,120);
+      else if (bold)    pdf.setTextColor(220,220,255);
+      else              pdf.setTextColor(180,180,210);
+
+      var labelX = ML + 2 + indent;
+      pdf.text(label, labelX, y);
+
+      // values
+      values.forEach(function(v, i) {
+        if (v === null || v === undefined) {
+          pdf.setTextColor(80,80,100);
+          pdf.setFont('helvetica','normal');
+          pdf.setFontSize(size);
+          pdf.text('—', colCenter(i), y, {align:'center'});
+          return;
+        }
+        var txt = typeof v === 'string' ? v : (bold ? R(Math.abs(v)) : (pctRow ? Pct(v) : R(Math.abs(v))));
+        var tcolor;
+        if (color === 'green' || (color === 'auto' && v > 0))       tcolor = [34,197,94];
+        else if (color === 'red'   || (color === 'auto' && v < 0))  tcolor = [239,68,68];
+        else if (color === 'gold')                                   tcolor = [250,204,21];
+        else if (bold)                                               tcolor = [220,220,255];
+        else                                                         tcolor = [170,170,200];
+
+        if (color === 'sign' || color === 'auto') {
+          txt = Rsign(v);
+          tcolor = v >= 0 ? [34,197,94] : [239,68,68];
+        }
+        pdf.setTextColor(tcolor[0], tcolor[1], tcolor[2]);
+        pdf.setFont('helvetica', bold ? 'bold' : (pctRow ? 'italic' : 'normal'));
+        pdf.setFontSize(size);
+        pdf.text(txt, colCenter(i), y, {align:'center'});
+      });
+
+      y += bold ? ROW + 0.5 : ROW;
+      rowCount++;
+    }
+
+    function vals(key, obj) {
+      // Returns values array for Q1 or single period
+      if (isQ1) return [obj(jd,key), obj(fd,key), obj(md,key), obj(d,key)];
+      return [obj(d,key)];
+    }
+    function valsDesp(key) { return vals(key, function(x){ return x.desp[key]; }); }
+    function valsRec(key)  { return vals(key, function(x){ return x.rec[key];  }); }
+    function valsCustom(fn){ return isQ1 ? [fn(jd),fn(fd),fn(md),fn(d)] : [fn(d)]; }
+
+    // ── RECEITA BRUTA ──────────────────────────────────────────
+    drawRow('RECEITA BRUTA', [], {secHdr:true});
+    drawRow('Novos Depósitos (Marcas, Patentes, DI)', valsRec('novos'), {indent:4, color:'green'});
+    drawRow('Procurações / Substabelecimentos',        valsRec('proc'),  {indent:4, color:'green'});
+    drawRow('Anuidades e Renovações',                  valsRec('anu'),   {indent:4, color:'green'});
+    drawRow('TOTAL RECEITA BRUTA',
+      isQ1 ? [jd.receita,fd.receita,md.receita,d.receita] : [d.receita],
+      {bold:true, color:'green'});
+
+    // ── CUSTO DO SERVIÇO ───────────────────────────────────────
+    drawRow('(–) CUSTO DO SERVIÇO — COGS', [], {secHdr:true});
+    drawRow('GRU / Taxas INPI',                           valsDesp('gru'),           {indent:4});
+    drawRow('Honorários de Terceiros / Correspondentes',  valsDesp('honorarios'),    {indent:4});
+    drawRow('Serviços Internacionais (WIPO, USPTO)',       valsDesp('internacional'), {indent:4});
+    drawRow('Relatórios Técnicos e Pareceres',             valsDesp('relatorios'),    {indent:4});
+    drawRow('TOTAL CUSTO DO SERVIÇO',
+      valsCustom(cogs), {bold:true, color:'red'});
+
+    drawRow('LUCRO BRUTO',
+      valsCustom(gp), {bold:true, color:'sign', size:8});
+    drawRow('Margem Bruta',
+      valsCustom(function(x){ return x.receita ? gp(x)/x.receita*100 : 0; }),
+      {pctRow:true, indent:4});
+
+    // ── DESPESAS OPERACIONAIS ──────────────────────────────────
+    drawRow('(–) DESPESAS OPERACIONAIS', [], {secHdr:true});
+
+    drawRow('Pessoal e Encargos', [], {subHdr:true});
+    drawRow('Salários, INSS e FGTS',              valsDesp('salarios'),  {indent:8});
+    drawRow('Rescisões / Verbas Trabalhistas',     valsDesp('rescisoes'), {indent:8});
+    drawRow('Benefícios (VT, VR, Plano de Saúde)',valsDesp('beneficios'),{indent:8});
+    drawRow('Pró-labore Sócios',                  valsDesp('socios'),    {indent:8});
+
+    drawRow('Tributos', [], {subHdr:true});
+    drawRow('Simples Nacional / Impostos s/ Receita', valsDesp('impostos'), {indent:8});
+
+    drawRow('Estrutura e Infraestrutura', [], {subHdr:true});
+    drawRow('Aluguel e Taxas de Ocupação', valsDesp('aluguel'),  {indent:8});
+    drawRow('Sistemas, TI e Software',     valsDesp('sistemas'), {indent:8});
+
+    drawRow('Comercial e Marketing', [], {subHdr:true});
+    drawRow('Marketing, Mídia e Publicidade', valsDesp('marketing'), {indent:8});
+
+    drawRow('Demais Despesas Administrativas', [], {subHdr:true});
+    drawRow('Outras Despesas Operacionais', valsDesp('outros'), {indent:8});
+
+    drawRow('TOTAL DESPESAS OPERACIONAIS',
+      valsCustom(opex), {bold:true, color:'red'});
+
+    drawRow('RESULTADO OPERACIONAL (EBIT)',
+      valsCustom(ebit), {bold:true, color:'sign', size:8});
+    drawRow('Margem EBIT',
+      valsCustom(function(x){ return x.receita ? ebit(x)/x.receita*100 : 0; }),
+      {pctRow:true, indent:4});
+
+    // ── RESULTADO FINANCEIRO ───────────────────────────────────
+    drawRow('(–) RESULTADO FINANCEIRO', [], {secHdr:true});
+    drawRow('Juros e Amortização — Serviço da Dívida',
+      valsDesp('divida'), {indent:4, color:'red'});
+
+    // ── RESULTADO LÍQUIDO ──────────────────────────────────────
+    y += 2;
+    pdf.setFillColor(50,50,100);
+    pdf.rect(ML, y - 4.5, CW, 8, 'F');
+    drawRow('RESULTADO LÍQUIDO DO PERÍODO',
+      valsCustom(nl), {bold:true, color:'sign', size:9});
+    drawRow('Margem Líquida',
+      valsCustom(function(x){ return x.receita ? nl(x)/x.receita*100 : 0; }),
+      {pctRow:true, indent:4});
+
+    // ── FOOTER ────────────────────────────────────────────────
+    pdf.setFillColor(30,30,60);
+    pdf.rect(0, PH - 8, PW, 8, 'F');
+    pdf.setFont('helvetica','normal');
+    pdf.setFontSize(6.5);
+    pdf.setTextColor(120,120,180);
+    pdf.text('Suprema Patentes — CFO Dashboard', ML, PH - 3);
+    pdf.text('Documento gerado automaticamente. Uso interno.', PW/2, PH - 3, {align:'center'});
+    pdf.text('Página 1 de ' + pdf.getNumberOfPages(), PW - MR, PH - 3, {align:'right'});
+
+    pdf.save('DRE-Suprema-' + p.toUpperCase() + '-2026.pdf');
+  }
 
   // Build charts on first load (visão geral tab)
   window.addEventListener('DOMContentLoaded', function() {
