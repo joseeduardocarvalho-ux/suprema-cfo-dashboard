@@ -1058,9 +1058,50 @@
 
   <!-- ── PROVISIONAMENTO ── -->
   <div class="section" id="tab-provisao">
-    <div class="alert">
-      <span class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.85"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
-      <div class="alert-text"><strong>Anuidade Abr/26:</strong> R$ 1.115.524 emitidos — 36% já recebido em Abr (R$ 403k). Restam ~R$ 410k entrando de Mai a Ago em parcelas (~10%/mês). <strong>Procuração Mar/26:</strong> R$ 2.121.427 emitidos — 34,76% recebido (R$ 737k). Meta: 40% até Jun; parcelas em Mai (~R$ 64k) e Jun (~R$ 47k).</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+
+      <!-- Anuidade -->
+      <div style="background:rgba(46,204,143,0.06);border:1px solid rgba(46,204,143,0.2);border-radius:12px;padding:16px 20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(46,204,143,0.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <span style="font-size:11px;font-weight:700;color:rgba(46,204,143,0.9);text-transform:uppercase;letter-spacing:0.8px">Anuidade Abr/26 — Recebimento em curso</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-muted)">Total emitido</span>
+          <span style="font-size:13px;font-weight:600;color:var(--text)">R$ 1.115.524</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-muted)">Recebido em Abr (36%)</span>
+          <span style="font-size:13px;font-weight:600;color:rgba(46,204,143,0.9)">R$ 403.923</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">
+          <span style="font-size:12px;color:var(--text-muted)">Ainda a entrar (Mai–Ago)</span>
+          <span style="font-size:13px;font-weight:700;color:rgba(46,204,143,0.9)">~R$ 410.000</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px">~R$ 112k/mês por 4 meses → meta 73% do total</div>
+      </div>
+
+      <!-- Procuração -->
+      <div style="background:rgba(201,162,39,0.06);border:1px solid rgba(201,162,39,0.2);border-radius:12px;padding:16px 20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(201,162,39,0.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span style="font-size:11px;font-weight:700;color:rgba(201,162,39,0.9);text-transform:uppercase;letter-spacing:0.8px">Procuração Mar/26 — Meta 40% até Jun</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-muted)">Total emitido</span>
+          <span style="font-size:13px;font-weight:600;color:var(--text)">R$ 2.121.427</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--text-muted)">Recebido até Abr (34,76%)</span>
+          <span style="font-size:13px;font-weight:600;color:rgba(201,162,39,0.9)">R$ 737.421</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">
+          <span style="font-size:12px;color:var(--text-muted)">Ainda a entrar (Mai + Jun)</span>
+          <span style="font-size:13px;font-weight:700;color:rgba(201,162,39,0.9)">~R$ 111.000</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Mai ~R$ 64k · Jun ~R$ 47k · Jul+ baixa (meta não atingida)</div>
+      </div>
+
     </div>
 
     <div class="grid-3 mb-20">
