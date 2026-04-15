@@ -6,6 +6,8 @@
   <title>CFO Dashboard — Suprema Patentes</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     :root {
       --navy: #13131F;
@@ -576,6 +578,70 @@
       .kpi-grid { grid-template-columns: 1fr 1fr; }
       .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     }
+
+    /* ── PERIOD SELECTOR ── */
+    .period-bar {
+      background: rgba(7,7,16,0.7);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 10px 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .period-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+    .period-btn {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .period-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
+    .period-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #fff;
+    }
+    /* ── EXPORT BUTTON ── */
+    .btn-export {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--gold);
+      border: none;
+      border-radius: 10px;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .btn-export:hover { opacity: 0.85; }
+    .dre-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .dre-title-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+    }
   </style>
 </head>
 <body>
@@ -605,6 +671,16 @@
   <div class="nav-tab" onclick="switchTab('graficos')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Gráficos</div>
   <div class="nav-tab" onclick="switchTab('dividas')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Dívidas</div>
   <div class="nav-tab" onclick="switchTab('provisao')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Provisionamento</div>
+</div>
+
+
+<!-- PERIOD SELECTOR -->
+<div class="period-bar">
+  <span class="period-label">Período:</span>
+  <button class="period-btn" id="pbtn-jan" onclick="setPeriodo('jan')">Janeiro</button>
+  <button class="period-btn" id="pbtn-fev" onclick="setPeriodo('fev')">Fevereiro</button>
+  <button class="period-btn" id="pbtn-mar" onclick="setPeriodo('mar')">Março</button>
+  <button class="period-btn active" id="pbtn-q1" onclick="setPeriodo('q1')">Q1 2026</button>
 </div>
 
 <!-- MAIN -->
@@ -746,6 +822,13 @@
 
   <!-- ── DRE ── -->
   <div class="section" id="tab-dre">
+    <div class="dre-header">
+      <div class="dre-title-text" id="dre-title-text">Demonstrativo de Resultado — Q1 2026</div>
+      <button class="btn-export" onclick="exportDRE()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar DRE PDF
+      </button>
+    </div>
     <div class="card">
       <div class="card-title">Demonstrativo de Resultado do Exercício — Q1 2026</div>
       <div style="overflow-x:auto">
@@ -1362,9 +1445,177 @@
   function switchTab(id) {
     document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
     document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-    event.target.classList.add('active');
+    event.currentTarget ? event.currentTarget.classList.add('active') : event.target.classList.add('active');
     document.getElementById('tab-' + id).classList.add('active');
     setTimeout(buildCharts, 100);
+  }
+
+  // ── FINANCIAL DATA ──
+  var PERIODOS = {
+    jan: {
+      label: 'Janeiro 2026',
+      receita: 346096, despesas: 502670, resultado: -156574, margem: -45.2, gru: 37800,
+      rec: { novos: 346096, proc: 0, anu: 0 },
+      desp: { salarios: 84478, rescisoes: 0, impostos: 99123, gru: 37800, aluguel: 28816,
+              divida: 26283, marketing: 12483, sistemas: 15191, beneficios: 16925,
+              socios: 110000, internacional: 0, relatorios: 1760, honorarios: 2750, outros: 66281 }
+    },
+    fev: {
+      label: 'Fevereiro 2026',
+      receita: 457753, despesas: 478164, resultado: -20411, margem: -4.5, gru: 55850,
+      rec: { novos: 457753, proc: 0, anu: 0 },
+      desp: { salarios: 74091, rescisoes: 0, impostos: 82131, gru: 55850, aluguel: 30600,
+              divida: 26283, marketing: 10546, sistemas: 15191, beneficios: 22311,
+              socios: 80000, internacional: 26359, relatorios: 4040, honorarios: 2750, outros: 48012 }
+    },
+    mar: {
+      label: 'Março 2026',
+      receita: 1175111, despesas: 858207, resultado: 316904, margem: 27.0, gru: 78400,
+      rec: { novos: 502862, proc: 655614, anu: 16635 },
+      desp: { salarios: 81131, rescisoes: 49072, impostos: 76732, gru: 78400, aluguel: 30600,
+              divida: 46370, marketing: 8535, sistemas: 15287, beneficios: 17397,
+              socios: 375000, internacional: 3744, relatorios: 8100, honorarios: 2850, outros: 64989 }
+    },
+    q1: {
+      label: 'Q1 2026 — Jan · Fev · Mar',
+      receita: 1978960, despesas: 1839041, resultado: 139919, margem: 7.1, gru: 172050,
+      rec: { novos: 1306711, proc: 655614, anu: 16635 },
+      desp: { salarios: 239700, rescisoes: 49072, impostos: 257986, gru: 172050, aluguel: 90016,
+              divida: 98936, marketing: 31564, sistemas: 45669, beneficios: 56633,
+              socios: 565000, internacional: 30103, relatorios: 13900, honorarios: 8350, outros: 179282 }
+    }
+  };
+  var periodoAtual = 'q1';
+
+  function fmtBRL(v) {
+    if (!v) return '—';
+    return 'R$ ' + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  function fmtRes(v) {
+    if (v === 0) return '—';
+    var str = 'R$ ' + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    return (v > 0 ? '+' : '-') + str;
+  }
+
+  // ── SET PERÍODO ──
+  function setPeriodo(p) {
+    periodoAtual = p;
+    ['jan','fev','mar','q1'].forEach(function(k) {
+      var btn = document.getElementById('pbtn-' + k);
+      if (btn) btn.classList.toggle('active', k === p);
+    });
+    var d = PERIODOS[p];
+    var titleEl = document.getElementById('dre-title-text');
+    if (titleEl) titleEl.textContent = 'Demonstrativo de Resultado — ' + d.label;
+    buildDRETable(p);
+  }
+
+  // ── BUILD DRE TABLE ──
+  function buildDRETable(p) {
+    var container = document.getElementById('dre-table-container');
+    if (!container) return;
+    var isQ1 = p === 'q1';
+    var d = PERIODOS[p];
+    var jd = PERIODOS.jan, fd = PERIODOS.fev, md = PERIODOS.mar;
+
+    function r(v) { return v ? fmtBRL(v) : '<span style="opacity:0.2">—</span>'; }
+    function rRes(v) { var cls = v >= 0 ? 'positive-val' : 'negative-val'; return '<span class="' + cls + '">' + fmtRes(v) + '</span>'; }
+    function dash() { return '<span style="opacity:0.2">—</span>'; }
+
+    function rowRec(lbl, key) {
+      if (isQ1) {
+        return '<tr><td class="indent">' + lbl + '</td><td class="revenue-val">' + r(jd.rec[key]) + '</td><td class="revenue-val">' + r(fd.rec[key]) + '</td><td class="revenue-val">' + r(md.rec[key]) + '</td><td class="revenue-val"><strong>' + r(d.rec[key]) + '</strong></td></tr>';
+      }
+      return '<tr><td class="indent">' + lbl + '</td><td class="revenue-val">' + r(d.rec[key]) + '</td></tr>';
+    }
+    function rowDesp(lbl, key) {
+      if (isQ1) {
+        return '<tr><td class="indent">' + lbl + '</td><td class="negative-val">' + r(jd.desp[key]) + '</td><td class="negative-val">' + r(fd.desp[key]) + '</td><td class="negative-val">' + r(md.desp[key]) + '</td><td class="negative-val">' + r(d.desp[key]) + '</td></tr>';
+      }
+      return '<tr><td class="indent">' + lbl + '</td><td class="negative-val">' + r(d.desp[key]) + '</td></tr>';
+    }
+    function secHdr(txt) {
+      var cs = isQ1 ? 5 : 2;
+      return '<tr class="dre-section-header"><td colspan="' + cs + '">' + txt + '</td></tr>';
+    }
+    function totalRow(lbl, val1, val2, val3, valT, cls) {
+      if (isQ1) {
+        return '<tr class="dre-total"><td>' + lbl + '</td><td class="' + cls + '"><strong>' + fmtBRL(val1) + '</strong></td><td class="' + cls + '"><strong>' + fmtBRL(val2) + '</strong></td><td class="' + cls + '"><strong>' + fmtBRL(val3) + '</strong></td><td class="' + cls + '"><strong>' + fmtBRL(valT) + '</strong></td></tr>';
+      }
+      return '<tr class="dre-total"><td>' + lbl + '</td><td class="' + cls + '"><strong>' + fmtBRL(valT) + '</strong></td></tr>';
+    }
+
+    var colHeader = isQ1
+      ? '<th>Janeiro</th><th>Fevereiro</th><th>Março</th><th>Q1 Total</th>'
+      : '<th>' + d.label.split(' ')[0] + ' 2026</th>';
+
+    var html = '<table class="dre-table"><thead><tr><th style="width:' + (isQ1?'38%':'60%') + '">Categoria</th>' + colHeader + '</tr></thead><tbody>';
+
+    // RECEITAS
+    html += secHdr('ENTRADAS — RECEITA BRUTA');
+    html += rowRec('Novos Registros', 'novos');
+    html += rowRec('Procurações', 'proc');
+    html += rowRec('Anuidades', 'anu');
+    html += totalRow('TOTAL RECEITA', jd.receita, fd.receita, md.receita, d.receita, 'revenue-val');
+
+    // DESPESAS
+    html += secHdr('SAÍDAS — DESPESAS OPERACIONAIS');
+    html += rowDesp('Salários', 'salarios');
+    html += rowDesp('Rescisões', 'rescisoes');
+    html += rowDesp('Benefícios', 'beneficios');
+    html += rowDesp('Pró-labore Sócios', 'socios');
+    html += rowDesp('Impostos / Simples', 'impostos');
+    html += rowDesp('GRU / INPI', 'gru');
+    html += rowDesp('Honorários', 'honorarios');
+    html += rowDesp('Internacional', 'internacional');
+    html += rowDesp('Aluguel', 'aluguel');
+    html += rowDesp('Marketing', 'marketing');
+    html += rowDesp('Sistemas', 'sistemas');
+    html += rowDesp('Serviço da Dívida', 'divida');
+    html += rowDesp('Relatórios', 'relatorios');
+    html += rowDesp('Outros', 'outros');
+    html += totalRow('TOTAL DESPESAS', jd.despesas, fd.despesas, md.despesas, d.despesas, 'negative-val');
+
+    // RESULTADO
+    if (isQ1) {
+      html += '<tr class="dre-result-neg"><td><strong>RESULTADO — JAN</strong></td><td class="negative-val"><strong>' + fmtRes(jd.resultado) + '</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td></tr>';
+      html += '<tr class="dre-result-neg"><td><strong>RESULTADO — FEV</strong></td><td style="opacity:0.2">—</td><td class="negative-val"><strong>' + fmtRes(fd.resultado) + '</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td></tr>';
+      html += '<tr class="dre-result"><td><strong>RESULTADO — MAR</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td class="positive-val"><strong>' + fmtRes(md.resultado) + '</strong></td><td style="opacity:0.2">—</td></tr>';
+      html += '<tr class="dre-result"><td><strong>RESULTADO Q1</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td class="positive-val"><strong>' + fmtRes(d.resultado) + '</strong></td></tr>';
+    } else {
+      var resCls = d.resultado >= 0 ? 'dre-result' : 'dre-result-neg';
+      var valCls = d.resultado >= 0 ? 'positive-val' : 'negative-val';
+      var nm = p === 'jan' ? 'JAN' : p === 'fev' ? 'FEV' : 'MAR';
+      html += '<tr class="' + resCls + '"><td><strong>RESULTADO — ' + nm + '</strong></td><td class="' + valCls + '"><strong>' + fmtRes(d.resultado) + '</strong></td></tr>';
+    }
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  // ── EXPORT DRE PDF ──
+  function exportDRE() {
+    var area = document.getElementById('dre-export-area');
+    if (!area) return;
+    var d = PERIODOS[periodoAtual];
+    html2canvas(area, {
+      scale: 2,
+      backgroundColor: '#13131F',
+      useCORS: false,
+      allowTaint: true,
+      logging: false,
+      windowWidth: 1440
+    }).then(function(canvas) {
+      var imgData = canvas.toDataURL('image/png');
+      var pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      var pw = pdf.internal.pageSize.getWidth();
+      var ph = pdf.internal.pageSize.getHeight();
+      var ratio = Math.min((pw - 20) / canvas.width, (ph - 20) / canvas.height);
+      var fw = canvas.width * ratio;
+      var fh = canvas.height * ratio;
+      pdf.addImage(imgData, 'PNG', (pw - fw) / 2, (ph - fh) / 2, fw, fh);
+      pdf.save('DRE-Suprema-' + periodoAtual.toUpperCase() + '-2026.pdf');
+    });
   }
 
   // ── CHART DEFAULTS ──
@@ -1781,6 +2032,7 @@
   // Build charts on first load (visão geral tab)
   window.addEventListener('DOMContentLoaded', function() {
     setTimeout(buildCharts, 300);
+    buildDRETable('q1');
   });
 </script>
 </body>
