@@ -642,6 +642,17 @@
       font-weight: 700;
       color: var(--white);
     }
+
+    /* ── DRE EXTRA STYLES ── */
+    td.indent2 { padding-left: 40px !important; color: rgba(255,255,255,0.65) !important; font-size: 11px !important; }
+    tr.dre-pct td { font-style: italic; color: rgba(255,255,255,0.55) !important; padding: 4px 14px !important;
+      font-size: 11px !important; border-bottom: none !important; }
+    tr.dre-sub-header td { font-size: 9px !important; font-weight: 700 !important; letter-spacing: 0.08em !important;
+      text-transform: uppercase !important; color: rgba(255,255,255,0.3) !important;
+      padding: 10px 14px 3px !important; border-bottom: none !important; }
+    tr.dre-result td, tr.dre-result-neg td { font-size: 13px !important; }
+    td.positive-val { color: var(--green) !important; }
+    td.negative-val { color: var(--red) !important; }
   </style>
 </head>
 <body>
@@ -822,206 +833,15 @@
 
   <!-- ── DRE ── -->
   <div class="section" id="tab-dre">
-    <div class="dre-header">
-      <div class="dre-title-text" id="dre-title-text">Demonstrativo de Resultado — Q1 2026</div>
-      <button class="btn-export" onclick="exportDRE()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exportar DRE PDF
-      </button>
-    </div>
-    <div class="card">
-      <div class="card-title">Demonstrativo de Resultado do Exercício — Q1 2026</div>
-      <div style="overflow-x:auto">
-        <table class="dre-table">
-          <thead>
-            <tr>
-              <th style="width:40%">Categoria</th>
-              <th>Janeiro</th>
-              <th>Fevereiro</th>
-              <th>Março</th>
-              <th>Q1 Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="dre-section-header"><td colspan="5">RECEITA BRUTA</td></tr>
-            <tr>
-              <td class="indent">Novos Registros</td>
-              <td class="revenue-val">R$ 346.096</td>
-              <td class="revenue-val">R$ 457.753</td>
-              <td class="revenue-val">R$ 502.862</td>
-              <td class="revenue-val">R$ 1.306.711</td>
-            </tr>
-            <tr>
-              <td class="indent">Procurações</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">R$ 655.614</td>
-              <td class="revenue-val">R$ 655.614</td>
-            </tr>
-            <tr>
-              <td class="indent">Anuidades</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">—</td>
-              <td class="revenue-val">R$ 16.635</td>
-              <td class="revenue-val">R$ 16.635</td>
-            </tr>
-            <tr class="dre-total">
-              <td>TOTAL RECEITA</td>
-              <td class="revenue-val">R$ 346.096</td>
-              <td class="revenue-val">R$ 457.753</td>
-              <td class="revenue-val">R$ 1.175.111</td>
-              <td class="revenue-val">R$ 1.978.960</td>
-            </tr>
-
-            <tr class="dre-section-header"><td colspan="5">CUSTO DIRETO DO SERVIÇO</td></tr>
-            <tr>
-              <td class="indent">GRU / INPI</td>
-              <td>R$ 37.800</td>
-              <td>R$ 55.850</td>
-              <td>R$ 78.400</td>
-              <td>R$ 172.050</td>
-            </tr>
-            <tr>
-              <td class="indent">Correspondente Internacional</td>
-              <td>—</td>
-              <td>R$ 26.359</td>
-              <td>R$ 3.744</td>
-              <td>R$ 30.103</td>
-            </tr>
-            <tr>
-              <td class="indent">Relatórios de Patente</td>
-              <td>R$ 1.760</td>
-              <td>R$ 4.040</td>
-              <td>R$ 8.100</td>
-              <td>R$ 13.900</td>
-            </tr>
-
-            <tr class="dre-section-header"><td colspan="5">DESPESAS OPERACIONAIS</td></tr>
-            <tr>
-              <td class="indent">Salários</td>
-              <td>R$ 84.478</td>
-              <td>R$ 74.091</td>
-              <td>R$ 81.131</td>
-              <td>R$ 239.700</td>
-            </tr>
-            <tr>
-              <td class="indent">Rescisões</td>
-              <td>—</td>
-              <td>—</td>
-              <td class="negative-val">R$ 49.072</td>
-              <td class="negative-val">R$ 49.072</td>
-            </tr>
-            <tr>
-              <td class="indent">Impostos (DAS + FGTS + INSS)</td>
-              <td>R$ 99.123</td>
-              <td>R$ 82.131</td>
-              <td>R$ 76.732</td>
-              <td>R$ 257.986</td>
-            </tr>
-            <tr>
-              <td class="indent">Aluguel (Curitiba + Cascavel)</td>
-              <td>R$ 28.816</td>
-              <td>R$ 30.600</td>
-              <td>R$ 30.600</td>
-              <td>R$ 90.016</td>
-            </tr>
-            <tr>
-              <td class="indent">Serviço da Dívida</td>
-              <td>R$ 26.283</td>
-              <td>R$ 26.283</td>
-              <td>R$ 46.370</td>
-              <td>R$ 98.936</td>
-            </tr>
-            <tr>
-              <td class="indent">Marketing e Publicidade</td>
-              <td>R$ 12.483</td>
-              <td>R$ 10.546</td>
-              <td>R$ 8.535</td>
-              <td>R$ 31.564</td>
-            </tr>
-            <tr>
-              <td class="indent">Sistemas (APOL, Drive, Ponto)</td>
-              <td>R$ 15.191</td>
-              <td>R$ 15.191</td>
-              <td>R$ 15.287</td>
-              <td>R$ 45.669</td>
-            </tr>
-            <tr>
-              <td class="indent">Benefícios (VR + VT)</td>
-              <td>R$ 16.925</td>
-              <td>R$ 22.311</td>
-              <td>R$ 17.397</td>
-              <td>R$ 56.633</td>
-            </tr>
-            <tr>
-              <td class="indent">Outros Operacionais</td>
-              <td>R$ 71.571</td>
-              <td>R$ 54.953</td>
-              <td>R$ 75.939</td>
-              <td>R$ 202.463</td>
-            </tr>
-            <tr class="dre-total">
-              <td>SUBTOTAL DESPESAS</td>
-              <td>R$ 394.430</td>
-              <td>R$ 402.355</td>
-              <td>R$ 490.910</td>
-              <td>R$ 1.287.695</td>
-            </tr>
-
-            <tr class="dre-section-header"><td colspan="5">DISTRIBUIÇÃO AOS SÓCIOS</td></tr>
-            <tr>
-              <td class="indent">Retirada Normal Mensal</td>
-              <td>R$ 110.000</td>
-              <td>R$ 80.000</td>
-              <td>R$ 120.000</td>
-              <td>R$ 310.000</td>
-            </tr>
-            <tr>
-              <td class="indent">Retirada Extra (Procuração)</td>
-              <td>—</td>
-              <td>—</td>
-              <td class="negative-val">R$ 255.000</td>
-              <td class="negative-val">R$ 255.000</td>
-            </tr>
-            <tr class="dre-total">
-              <td>TOTAL SAÍDAS</td>
-              <td>R$ 502.670</td>
-              <td>R$ 478.164</td>
-              <td>R$ 858.207</td>
-              <td>R$ 1.839.041</td>
-            </tr>
-
-            <tr class="dre-result-neg">
-              <td><strong>RESULTADO — JAN</strong></td>
-              <td class="negative-val"><strong>-R$ 156.574</strong></td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr class="dre-result-neg">
-              <td><strong>RESULTADO — FEV</strong></td>
-              <td>—</td>
-              <td class="negative-val"><strong>-R$ 20.411</strong></td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr class="dre-result">
-              <td><strong>RESULTADO — MAR</strong></td>
-              <td>—</td>
-              <td>—</td>
-              <td class="positive-val"><strong>+R$ 316.904</strong></td>
-              <td>—</td>
-            </tr>
-            <tr class="dre-result">
-              <td><strong>RESULTADO Q1</strong></td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td class="positive-val"><strong>+R$ 139.919</strong></td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="card" id="dre-export-area">
+      <div class="dre-header">
+        <div class="dre-title-text" id="dre-title-text">Demonstrativo de Resultado — Q1 2026</div>
+        <button class="btn-export" onclick="exportDRE()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar DRE PDF
+        </button>
       </div>
+      <div id="dre-table-container" style="overflow-x:auto"></div>
     </div>
   </div>
 
@@ -1515,85 +1335,198 @@
     var container = document.getElementById('dre-table-container');
     if (!container) return;
     var isQ1 = p === 'q1';
-    var d = PERIODOS[p];
+    var d  = PERIODOS[p];
     var jd = PERIODOS.jan, fd = PERIODOS.fev, md = PERIODOS.mar;
 
-    function r(v) { return v ? fmtBRL(v) : '<span style="opacity:0.2">—</span>'; }
-    function rRes(v) { var cls = v >= 0 ? 'positive-val' : 'negative-val'; return '<span class="' + cls + '">' + fmtRes(v) + '</span>'; }
-    function dash() { return '<span style="opacity:0.2">—</span>'; }
+    function fmtV(v) {
+      if (!v || v === 0) return '<span style="opacity:0.25">—</span>';
+      return 'R$&nbsp;' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0,maximumFractionDigits:0});
+    }
+    function fmtSign(v) {
+      if (!v || v === 0) return '<span style="opacity:0.25">—</span>';
+      var s = (v > 0 ? '+' : '−') + ' R$&nbsp;' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:0,maximumFractionDigits:0});
+      return s;
+    }
+    function fmtPct(v) {
+      if (v === null || v === undefined) return '—';
+      return v.toFixed(1).replace('.', ',') + '%';
+    }
 
+    var cols = isQ1 ? 4 : 1;
+    var W = isQ1 ? '32%' : '55%';
+
+    // cell helpers
+    function recCell(v)  { return '<td class="revenue-val">'  + fmtV(v) + '</td>'; }
+    function negCell(v)  { return '<td class="negative-val">' + fmtV(v) + '</td>'; }
+    function totRec(v)   { return '<td class="revenue-val"><strong>'  + fmtV(v) + '</strong></td>'; }
+    function totNeg(v)   { return '<td class="negative-val"><strong>' + fmtV(v) + '</strong></td>'; }
+    function resCell(v)  {
+      var cls = v >= 0 ? 'positive-val' : 'negative-val';
+      return '<td class="' + cls + '"><strong>' + fmtSign(v) + '</strong></td>';
+    }
+    function pctCell(v)  {
+      var cls = v >= 0 ? 'positive-val' : 'negative-val';
+      return '<td class="' + cls + '"><em>' + fmtPct(v) + '</em></td>';
+    }
+    function dashCell() { return '<td style="opacity:0.2;text-align:right">—</td>'; }
+    function lblCell(v)  { return '<td style="text-align:right;color:rgba(255,255,255,0.7)">' + fmtV(v) + '</td>'; }
+
+    // row builders
     function rowRec(lbl, key) {
-      if (isQ1) {
-        return '<tr><td class="indent">' + lbl + '</td><td class="revenue-val">' + r(jd.rec[key]) + '</td><td class="revenue-val">' + r(fd.rec[key]) + '</td><td class="revenue-val">' + r(md.rec[key]) + '</td><td class="revenue-val"><strong>' + r(d.rec[key]) + '</strong></td></tr>';
-      }
-      return '<tr><td class="indent">' + lbl + '</td><td class="revenue-val">' + r(d.rec[key]) + '</td></tr>';
+      var cells = isQ1
+        ? recCell(jd.rec[key]) + recCell(fd.rec[key]) + recCell(md.rec[key]) + recCell(d.rec[key])
+        : recCell(d.rec[key]);
+      return '<tr><td class="indent">' + lbl + '</td>' + cells + '</tr>';
     }
     function rowDesp(lbl, key) {
-      if (isQ1) {
-        return '<tr><td class="indent">' + lbl + '</td><td class="negative-val">' + r(jd.desp[key]) + '</td><td class="negative-val">' + r(fd.desp[key]) + '</td><td class="negative-val">' + r(md.desp[key]) + '</td><td class="negative-val">' + r(d.desp[key]) + '</td></tr>';
-      }
-      return '<tr><td class="indent">' + lbl + '</td><td class="negative-val">' + r(d.desp[key]) + '</td></tr>';
+      var cells = isQ1
+        ? negCell(jd.desp[key]) + negCell(fd.desp[key]) + negCell(md.desp[key]) + negCell(d.desp[key])
+        : negCell(d.desp[key]);
+      return '<tr><td class="indent">' + lbl + '</td>' + cells + '</tr>';
+    }
+    function rowDesp2(lbl, key, subkey) {
+      // for nested sub-labels (indent2)
+      var cells = isQ1
+        ? negCell(jd.desp[key]) + negCell(fd.desp[key]) + negCell(md.desp[key]) + negCell(d.desp[key])
+        : negCell(d.desp[key]);
+      return '<tr><td class="indent2">' + lbl + '</td>' + cells + '</tr>';
+    }
+    function totalRow(lbl, v1, v2, v3, vT, cellFn) {
+      var cells = isQ1 ? cellFn(v1) + cellFn(v2) + cellFn(v3) + cellFn(vT) : cellFn(vT);
+      return '<tr class="dre-total"><td>' + lbl + '</td>' + cells + '</tr>';
+    }
+    function resultRow(lbl, v1, v2, v3, vT, rowCls) {
+      var cells = isQ1 ? resCell(v1) + resCell(v2) + resCell(v3) + resCell(vT) : resCell(vT);
+      return '<tr class="' + rowCls + '"><td><strong>' + lbl + '</strong></td>' + cells + '</tr>';
+    }
+    function pctRow(lbl, v1, v2, v3, vT) {
+      var cells = isQ1 ? pctCell(v1) + pctCell(v2) + pctCell(v3) + pctCell(vT) : pctCell(vT);
+      return '<tr class="dre-pct"><td><em>' + lbl + '</em></td>' + cells + '</tr>';
     }
     function secHdr(txt) {
-      var cs = isQ1 ? 5 : 2;
-      return '<tr class="dre-section-header"><td colspan="' + cs + '">' + txt + '</td></tr>';
+      return '<tr class="dre-section-header"><td colspan="' + (cols+1) + '">' + txt + '</td></tr>';
     }
-    function totalRow(lbl, val1, val2, val3, valT, cls) {
-      if (isQ1) {
-        return '<tr class="dre-total"><td>' + lbl + '</td><td class="' + cls + '"><strong>' + fmtBRL(val1) + '</strong></td><td class="' + cls + '"><strong>' + fmtBRL(val2) + '</strong></td><td class="' + cls + '"><strong>' + fmtBRL(val3) + '</strong></td><td class="' + cls + '"><strong>' + fmtBRL(valT) + '</strong></td></tr>';
-      }
-      return '<tr class="dre-total"><td>' + lbl + '</td><td class="' + cls + '"><strong>' + fmtBRL(valT) + '</strong></td></tr>';
+    function subHdr(txt) {
+      return '<tr class="dre-sub-header"><td colspan="' + (cols+1) + '">' + txt + '</td></tr>';
     }
 
-    var colHeader = isQ1
+    // Computed values
+    var cogs_j = jd.desp.gru + jd.desp.honorarios + jd.desp.internacional + jd.desp.relatorios;
+    var cogs_f = fd.desp.gru + fd.desp.honorarios + fd.desp.internacional + fd.desp.relatorios;
+    var cogs_m = md.desp.gru + md.desp.honorarios + md.desp.internacional + md.desp.relatorios;
+    var cogs_q = d.desp.gru  + d.desp.honorarios  + d.desp.internacional  + d.desp.relatorios;
+
+    var gp_j = jd.receita - cogs_j;
+    var gp_f = fd.receita - cogs_f;
+    var gp_m = md.receita - cogs_m;
+    var gp_q = d.receita  - cogs_q;
+
+    var gpm_j = jd.receita ? (gp_j/jd.receita*100) : 0;
+    var gpm_f = fd.receita ? (gp_f/fd.receita*100) : 0;
+    var gpm_m = md.receita ? (gp_m/md.receita*100) : 0;
+    var gpm_q = d.receita  ? (gp_q/d.receita*100)  : 0;
+
+    var opex_j = jd.desp.salarios + jd.desp.rescisoes + jd.desp.beneficios + jd.desp.socios + jd.desp.impostos + jd.desp.aluguel + jd.desp.marketing + jd.desp.sistemas + jd.desp.outros;
+    var opex_f = fd.desp.salarios + fd.desp.rescisoes + fd.desp.beneficios + fd.desp.socios + fd.desp.impostos + fd.desp.aluguel + fd.desp.marketing + fd.desp.sistemas + fd.desp.outros;
+    var opex_m = md.desp.salarios + md.desp.rescisoes + md.desp.beneficios + md.desp.socios + md.desp.impostos + md.desp.aluguel + md.desp.marketing + md.desp.sistemas + md.desp.outros;
+    var opex_q = d.desp.salarios  + d.desp.rescisoes  + d.desp.beneficios  + d.desp.socios  + d.desp.impostos  + d.desp.aluguel  + d.desp.marketing  + d.desp.sistemas  + d.desp.outros;
+
+    var ebit_j = gp_j - opex_j;
+    var ebit_f = gp_f - opex_f;
+    var ebit_m = gp_m - opex_m;
+    var ebit_q = gp_q - opex_q;
+
+    var ebitm_j = jd.receita ? (ebit_j/jd.receita*100) : 0;
+    var ebitm_f = fd.receita ? (ebit_f/fd.receita*100) : 0;
+    var ebitm_m = md.receita ? (ebit_m/md.receita*100) : 0;
+    var ebitm_q = d.receita  ? (ebit_q/d.receita*100)  : 0;
+
+    var fin_j = -jd.desp.divida, fin_f = -fd.desp.divida, fin_m = -md.desp.divida, fin_q = -d.desp.divida;
+
+    var nl_j = ebit_j + fin_j;
+    var nl_f = ebit_f + fin_f;
+    var nl_m = ebit_m + fin_m;
+    var nl_q = ebit_q + fin_q;
+
+    var nlm_j = jd.receita ? (nl_j/jd.receita*100) : 0;
+    var nlm_f = fd.receita ? (nl_f/fd.receita*100) : 0;
+    var nlm_m = md.receita ? (nl_m/md.receita*100) : 0;
+    var nlm_q = d.receita  ? (nl_q/d.receita*100)  : 0;
+
+    // Column headers
+    var colH = isQ1
       ? '<th>Janeiro</th><th>Fevereiro</th><th>Março</th><th>Q1 Total</th>'
       : '<th>' + d.label.split(' ')[0] + ' 2026</th>';
 
-    var html = '<table class="dre-table"><thead><tr><th style="width:' + (isQ1?'38%':'60%') + '">Categoria</th>' + colHeader + '</tr></thead><tbody>';
+    var h = '<table class="dre-table"><thead><tr>'
+          + '<th style="width:' + W + '">Descrição</th>'
+          + colH
+          + '</tr></thead><tbody>';
 
-    // RECEITAS
-    html += secHdr('ENTRADAS — RECEITA BRUTA');
-    html += rowRec('Novos Registros', 'novos');
-    html += rowRec('Procurações', 'proc');
-    html += rowRec('Anuidades', 'anu');
-    html += totalRow('TOTAL RECEITA', jd.receita, fd.receita, md.receita, d.receita, 'revenue-val');
+    // ── RECEITA BRUTA ──────────────────────────────
+    h += secHdr('RECEITA BRUTA');
+    h += rowRec('Novos Depósitos (Marcas, Patentes, DI)', 'novos');
+    h += rowRec('Procurações / Substabelecimentos', 'proc');
+    h += rowRec('Anuidades e Renovações', 'anu');
+    h += totalRow('TOTAL RECEITA BRUTA', jd.receita, fd.receita, md.receita, d.receita, totRec);
 
-    // DESPESAS
-    html += secHdr('SAÍDAS — DESPESAS OPERACIONAIS');
-    html += rowDesp('Salários', 'salarios');
-    html += rowDesp('Rescisões', 'rescisoes');
-    html += rowDesp('Benefícios', 'beneficios');
-    html += rowDesp('Pró-labore Sócios', 'socios');
-    html += rowDesp('Impostos / Simples', 'impostos');
-    html += rowDesp('GRU / INPI', 'gru');
-    html += rowDesp('Honorários', 'honorarios');
-    html += rowDesp('Internacional', 'internacional');
-    html += rowDesp('Aluguel', 'aluguel');
-    html += rowDesp('Marketing', 'marketing');
-    html += rowDesp('Sistemas', 'sistemas');
-    html += rowDesp('Serviço da Dívida', 'divida');
-    html += rowDesp('Relatórios', 'relatorios');
-    html += rowDesp('Outros', 'outros');
-    html += totalRow('TOTAL DESPESAS', jd.despesas, fd.despesas, md.despesas, d.despesas, 'negative-val');
+    // ── CUSTO DO SERVIÇO (COGS) ────────────────────
+    h += secHdr('(–) CUSTO DO SERVIÇO — COGS');
+    h += rowDesp('GRU / Taxas INPI (Custo Direto Gov.)', 'gru');
+    h += rowDesp('Honorários de Terceiros / Correspondentes', 'honorarios');
+    h += rowDesp('Serviços Internacionais (WIPO, USPTO, EUIPO)', 'internacional');
+    h += rowDesp('Relatórios Técnicos e Pareceres', 'relatorios');
+    h += totalRow('TOTAL CUSTO DO SERVIÇO', cogs_j, cogs_f, cogs_m, cogs_q, totNeg);
 
-    // RESULTADO
-    if (isQ1) {
-      html += '<tr class="dre-result-neg"><td><strong>RESULTADO — JAN</strong></td><td class="negative-val"><strong>' + fmtRes(jd.resultado) + '</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td></tr>';
-      html += '<tr class="dre-result-neg"><td><strong>RESULTADO — FEV</strong></td><td style="opacity:0.2">—</td><td class="negative-val"><strong>' + fmtRes(fd.resultado) + '</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td></tr>';
-      html += '<tr class="dre-result"><td><strong>RESULTADO — MAR</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td class="positive-val"><strong>' + fmtRes(md.resultado) + '</strong></td><td style="opacity:0.2">—</td></tr>';
-      html += '<tr class="dre-result"><td><strong>RESULTADO Q1</strong></td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td style="opacity:0.2">—</td><td class="positive-val"><strong>' + fmtRes(d.resultado) + '</strong></td></tr>';
-    } else {
-      var resCls = d.resultado >= 0 ? 'dre-result' : 'dre-result-neg';
-      var valCls = d.resultado >= 0 ? 'positive-val' : 'negative-val';
-      var nm = p === 'jan' ? 'JAN' : p === 'fev' ? 'FEV' : 'MAR';
-      html += '<tr class="' + resCls + '"><td><strong>RESULTADO — ' + nm + '</strong></td><td class="' + valCls + '"><strong>' + fmtRes(d.resultado) + '</strong></td></tr>';
-    }
+    // ── LUCRO BRUTO ────────────────────────────────
+    var gpRowCls = 'dre-result' + (gp_q < 0 ? '-neg' : '');
+    h += resultRow('LUCRO BRUTO', gp_j, gp_f, gp_m, gp_q, gpRowCls);
+    h += pctRow('Margem Bruta (%)', gpm_j, gpm_f, gpm_m, gpm_q);
 
-    html += '</tbody></table>';
-    container.innerHTML = html;
+    // ── DESPESAS OPERACIONAIS ──────────────────────
+    h += secHdr('(–) DESPESAS OPERACIONAIS');
+
+    h += subHdr('Pessoal e Encargos');
+    h += rowDesp('Salários, INSS e FGTS', 'salarios');
+    h += rowDesp('Rescisões / Verbas Trabalhistas', 'rescisoes');
+    h += rowDesp('Benefícios (VT, VR, Plano de Saúde)', 'beneficios');
+    h += rowDesp('Pró-labore Sócios', 'socios');
+
+    h += subHdr('Tributos');
+    h += rowDesp('Simples Nacional / Impostos s/ Receita', 'impostos');
+
+    h += subHdr('Estrutura e Infraestrutura');
+    h += rowDesp('Aluguel e Taxas de Ocupação', 'aluguel');
+    h += rowDesp('Sistemas, TI e Software', 'sistemas');
+
+    h += subHdr('Comercial e Marketing');
+    h += rowDesp('Marketing, Mídia e Publicidade', 'marketing');
+
+    h += subHdr('Demais Despesas Administrativas');
+    h += rowDesp('Outras Despesas Operacionais', 'outros');
+
+    h += totalRow('TOTAL DESPESAS OPERACIONAIS', opex_j, opex_f, opex_m, opex_q, totNeg);
+
+    // ── EBIT ──────────────────────────────────────
+    var ebitCls = 'dre-result' + (ebit_q < 0 ? '-neg' : '');
+    h += resultRow('RESULTADO OPERACIONAL (EBIT)', ebit_j, ebit_f, ebit_m, ebit_q, ebitCls);
+    h += pctRow('Margem EBIT (%)', ebitm_j, ebitm_f, ebitm_m, ebitm_q);
+
+    // ── RESULTADO FINANCEIRO ───────────────────────
+    h += secHdr('(–) RESULTADO FINANCEIRO');
+    h += rowDesp('Juros e Amortização — Serviço da Dívida', 'divida');
+    h += totalRow('TOTAL RESULTADO FINANCEIRO', fin_j, fin_f, fin_m, fin_q, function(v){ return resCell(v); });
+
+    // ── RESULTADO LÍQUIDO ──────────────────────────
+    var nlCls = 'dre-result' + (nl_q < 0 ? '-neg' : '');
+    h += resultRow('RESULTADO LÍQUIDO DO PERÍODO', nl_j, nl_f, nl_m, nl_q, nlCls);
+    h += pctRow('Margem Líquida (%)', nlm_j, nlm_f, nlm_m, nlm_q);
+
+    h += '</tbody></table>';
+    container.innerHTML = h;
   }
 
-  // ── EXPORT DRE PDF ──
+    // ── EXPORT DRE PDF ──
   function exportDRE() {
     var area = document.getElementById('dre-export-area');
     if (!area) return;
