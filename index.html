@@ -1323,6 +1323,9 @@
     if (dt) dt.textContent = 'Demonstrativo de Resultado — ' + d.label;
 
     // KPI cards — Visão Geral
+    var rlbl = document.getElementById('kpi-res-lbl');
+    if (rlbl) rlbl.textContent = 'Resultado ' + (isQ1 ? 'Q1' : d.label.split(' ')[0]);
+
     var lbl = document.getElementById('kpi-main-lbl');
     if (lbl) lbl.textContent = 'Receita ' + (isQ1 ? 'Q1' : d.label.split(' ')[0]);
 
